@@ -6,6 +6,11 @@ export const useGlobalStore = defineStore('global',  {
   state: () => ({
     user: ref<UserType | null>(null),
     role: ref<string>(''),
+    confirmationModal: ref<{
+      title: string,
+      message: string,
+      action: () => void
+    }>({title: '', message: '', action: () => {}})
   }),
 
   actions: {

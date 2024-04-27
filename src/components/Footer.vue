@@ -1,7 +1,7 @@
 <template>
   <footer class="footer footer-center h-min-full p-4 bg-base-300 text-base-content mt-44" :class="{hidden: isHidden}">
     <div>
-      <p>Copyright © 2024 - All right reserved by Novle</p>
+      <p>Copyright © 2024 - All right reserved by AChat</p>
     </div>
   </footer>
 </template>

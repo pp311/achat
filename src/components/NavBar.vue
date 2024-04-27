@@ -1,24 +1,35 @@
 <template>
-  <div class="navbar bg-base-300 border-b-[1px] border-primary" :class="{hidden: isHidden}">
+  <div class="navbar p-0 bg-base-300 border-b-[1px] border-primary" :class="{hidden: isHidden}">
     <RouterLink to="/" class="btn btn-ghost text-primary text-2xl">AChat</RouterLink>
     <!-- navbar left items -->
-    <div class="flex-none hidden lg:block">
+    <div class="flex lg:block flex-row gap-4 justify-center items-center">
       <ul class="menu menu-horizontal">
-        <li class="dropdown dropdown-hover dropdown-bottom">
-          <a class="">Navbar Item 1
-            <ChevronDownIcon class="size-1" />
-          </a>
-          <ul class="m-0 z-[2] bg-base-100 w-[150px] rounded-xl shadow dropdown-content menu">
-            <li><a>Navbar Item 1</a></li>
-            <li><a>Navbar Item 1</a></li>
-            <li><a>Navbar Item 1</a></li>
-          </ul>
+        <li class="">
+          <RouterLink to="/chat" class="font-bold text-lg"
+            :class="{active: activePage === 'chat'}">
+            <ChatBubbleLeftRightIcon class="size-6" />
+            Chat
+          </RouterLink>
         </li>
-        <li><a>Navbar Item 2</a></li>
+        <div class="divider divider-horizontal divider-neutral mx-0 py-4"></div>
+        <li class="">
+          <RouterLink to="/contacts" class="font-bold text-lg" :class="{active: activePage === 'contacts'}">
+            <UsersIcon class="size-6" />
+            Contacts
+          </RouterLink>
+        </li>
+
+        <div class="divider divider-horizontal divider-neutral mx-0 py-4"></div>
+        <li>
+          <RouterLink to="/settings" class="font-bold text-lg" :class="{active: activePage === 'settings'}">
+            <AdjustmentsHorizontalIcon class="size-6"/>
+            Settings
+          </RouterLink>
+        </li>
       </ul>
     </div>
     <!-- Navbar right items -->
-    <div class='ml-auto'>
+    <div class='ml-auto gap-4'>
       <label class="swap swap-rotate btn btn-ghost">
         <input type="checkbox" value="halloween" class="theme-controller" />
         <svg class="swap-off fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -30,6 +41,20 @@
             d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
         </svg>
       </label>
+
+      <div class=" dropdown dropdown-bottom dropdown-end">
+        <div class="avatar mr-4 flex flex-row items-center" role="button" tabindex="0">
+          <div class="w-10 rounded-full">
+            <UserCircleIcon v-if="user?.avatarUrl == null" class="size-10" />
+            <img :src="user?.avatarUrl" v-else>
+          </div>
+          <ChevronDownIcon class="size-6 ml-2"/>
+        </div>
+        <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 mt-2">
+          <li><a>Item 1</a></li>
+          <li><RouterLink to="/login" @click="handleLogout">Logout</RouterLink></li>
+        </ul>
+      </div>
     </div>
     <!-- {loginSection} -->
     <!-- <LoginModal /> -->
@@ -39,11 +64,19 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { ChevronDownIcon } from '@heroicons/vue/24/solid'
+import { ChevronDownIcon, UserCircleIcon, ChatBubbleLeftRightIcon, AdjustmentsHorizontalIcon, UsersIcon } from '@heroicons/vue/24/solid'
 import { ref, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
+import { useGlobalStore } from '@/stores/global'
+import { storeToRefs } from 'pinia'
+import { userService } from '@/services/user.service'
+
+const store = useGlobalStore()
+
+const { user } = storeToRefs(store)
 
 const isHidden = ref(false)
+const activePage = ref('')
 
 // if route is /login or /register, hide the navbar
 const route = useRoute()
@@ -54,6 +87,27 @@ watchEffect(() => {
     isHidden.value = false
   }
 })
+
+watchEffect(() => {
+  switch (route.path) {
+    case '/chat':
+      activePage.value = 'chat'
+      break
+    case '/contacts':
+      activePage.value = 'contacts'
+      break
+    case '/settings':
+      activePage.value = 'settings'
+      break
+    default:
+      activePage.value = ''
+  }
+})
+
+
+const handleLogout = () => {
+  userService.logout()
+}
 
 
 </script>

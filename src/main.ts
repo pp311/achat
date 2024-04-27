@@ -20,6 +20,16 @@ const connection = new HubConnectionBuilder()
   .withUrl('http://localhost:8080/signalr')
   .build();
 
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+
+  if (token || to.name === 'login' || to.name === 'register') {
+    next()
+  } else {
+    next({name: 'login'})
+  }
+})
+
 app.use(VueSignalR, { connection } as any)
 
 app.use(Vue3Toasity, {

@@ -39,14 +39,21 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/solid'
 import { useRoute, useRouter } from 'vue-router'
 import { useGlobalStore } from '@/stores/global'
 import type { LoginResponse, UserType } from '@/types/user'
+
 const callback = (response : any) => {
-  console.log("Handle the response", response)
+  toast.loading('Logging in...')
+  userService.googleAuthenticate(response.access_token)
+    .then((res : UserType) => {
+      store.setUser(res)
+      router.push({ path: '/' })
+    })
+    .catch((error : Error) => toast.error(error.message))
 }
 </script>
 
 <template>
-  <section class="bg-gray-50 dark:bg-gray-900">
-    <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+  <section class="bg-[url('../assets/rain.gif')] bg-cover">
+    <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 backdrop-blur-sm backdrop-brightness-50">
       <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
         <img class="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo">
         AChat

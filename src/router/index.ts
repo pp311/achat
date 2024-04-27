@@ -21,12 +21,17 @@ const router = createRouter({
     {
       path: '/contacts',
       name: 'contacts',
-      component: () => import('../views/ContactGridView.vue')
+      component: () => import('../views/ContactGridView.vue'),
     },
     {
-      path: '/chat',
+      path: '/chat/:id',
       name: 'chat',
       component: () => import('../views/ChatView.vue')
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: () => import('../views/SettingView.vue')
     },
   ]
 })

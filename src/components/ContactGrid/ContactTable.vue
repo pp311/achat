@@ -1,12 +1,36 @@
 <script setup lang="ts">
-
 import Pagination from '@/components/Pagination.vue'
+
+import { ref, watchEffect } from 'vue'
+import type { ContactFilter, ContactListItem } from '@/types/contact'
+import { useContactListStore } from '@/stores/contactListStore'
+import { ContactSortBy } from '@/types/enum'
+import { UserCircleIcon } from '@heroicons/vue/24/solid'
+
+const filter = ref<ContactFilter>({
+  search: '',
+  type: null,
+  tagIds: [],
+  sortBy: ContactSortBy.ID
+})
+
+const isLoading = ref(false)
+
+const contactItems = ref<ContactListItem[]>([])
+
+const store = useContactListStore()
+
+watchEffect(async () => {
+  isLoading.value = true
+  contactItems.value = await store.getContactList(filter.value)
+  isLoading.value = false
+})
+
 </script>
 
 <template>
   <div class="overflow-x-auto">
     <table class="table table-zebra">
-      <!-- head -->
       <thead>
       <tr>
         <th>
@@ -14,15 +38,14 @@ import Pagination from '@/components/Pagination.vue'
             <input type="checkbox" class="checkbox" />
           </label>
         </th>
-        <th>Name</th>
-        <th>Job</th>
-        <th>Favorite Color</th>
+        <th class="font-bold text-lg">Name/Email</th>
+        <th class="font-bold text-lg">Source type</th>
+        <th class="font-bold text-lg">Added Date</th>
         <th></th>
       </tr>
       </thead>
       <tbody>
-      <!-- row 1 -->
-      <tr v-for="i in 10" :key="i">
+      <tr v-for="contact in contactItems" :key="contact.id">
         <th>
           <label>
             <input type="checkbox" class="checkbox" />
@@ -32,31 +55,39 @@ import Pagination from '@/components/Pagination.vue'
           <div class="flex items-center gap-3">
             <div class="avatar">
               <div class="mask mask-squircle w-12 h-12">
-                <img src="https://i.pinimg.com/564x/cf/86/12/cf861202e182d167000ea49d711e9c87.jpg" alt="Avatar Tailwind CSS Component" />
+                <img v-if="contact.avatarUrl" :src="contact.avatarUrl" alt="" />
+                <UserCircleIcon v-else class="size-10" />
               </div>
             </div>
             <div>
-              <div class="font-bold">Hart Hagerty</div>
-              <div class="text-sm opacity-50">United States</div>
+              <div class="font-bold text-lg">{{contact.name}}</div>
             </div>
           </div>
         </td>
         <td>
-          Zemlak, Daniel and Leannon
-          <br/>
-          <span class="badge badge-ghost badge-sm">Desktop Support Technician</span>
+          <div class="size-8">
+            <img src="../../assets/facebook.svg">
+          </div>
         </td>
-        <td>Purple</td>
+        <td>15:46 12-12-2024</td>
         <th>
-          <button class="btn btn-ghost btn-xs">details</button>
+          <RouterLink :to="'/chat/' + contact.id">
+            <button class="btn btn-ghost btn-xs">Chat now</button>
+          </RouterLink>
         </th>
       </tr>
+
+<!--      Loading-->
+      <template v-if="isLoading" >
+        <tr v-for="i in 3" :key="i">
+          <td v-for="j in 5" :key="j">
+            <div class="skeleton h-10 w-full"></div>
+          </td>
+        </tr>
+      </template>
       </tbody>
     </table>
-    <div class="flex justify-center w-full mt-4">
-      <Pagination/>
     </div>
-  </div>
 </template>
 
 <style scoped>

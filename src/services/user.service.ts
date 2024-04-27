@@ -5,6 +5,7 @@ export const userService = {
   login,
   logout,
   register,
+  googleAuthenticate
 };
 
 async function login(email : string, password : string, isRemember : boolean) {
@@ -26,8 +27,21 @@ async function login(email : string, password : string, isRemember : boolean) {
 }
 
 function logout() {
-  // xoá user từ local storage để log out
+  ApiService.axiosCall({
+    method: 'POST',
+    url: '/auth/revoke-token',
+    data: { refreshToken: localStorage.getItem('refreshToken') || sessionStorage.getItem('refreshToken') }
+  });
+
+  localStorage.removeItem('token');
+  sessionStorage.removeItem('token');
+  sessionStorage.removeItem('user');
   localStorage.removeItem('user');
+  localStorage.removeItem('role');
+  sessionStorage.removeItem('role');
+  localStorage.removeItem('refreshToken');
+  sessionStorage.removeItem('refreshToken');
+
 }
 
 function updateCredLocalStorage(response : LoginResponse, isRemember : boolean) {
@@ -38,24 +52,24 @@ function updateCredLocalStorage(response : LoginResponse, isRemember : boolean) 
     localStorage.setItem('refreshToken', response.refreshToken);
   }
   else {
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('user');
-    sessionStorage.removeItem('role');
-    sessionStorage.removeItem('refreshToken');
-  }
-}
-
-function updateCredSessionStorage(response : LoginResponse, isRemember : boolean) {
-  if (isRemember) {
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('user');
-    sessionStorage.removeItem('role');
-    sessionStorage.removeItem('refreshToken');
-  } else {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('role');
     localStorage.removeItem('refreshToken');
+  }
+}
+
+function updateCredSessionStorage(response : LoginResponse, isRemember : boolean) {
+  if (!isRemember) {
+    sessionStorage.setItem('token', response.accessToken!);
+    sessionStorage.setItem('user', JSON.stringify(response.user));
+    sessionStorage.setItem('role', response.role);
+    sessionStorage.setItem('refreshToken', response.refreshToken);
+  } else {
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
+    sessionStorage.removeItem('role');
+    sessionStorage.removeItem('refreshToken');
   }
 }
 
@@ -65,4 +79,21 @@ async function register(request : Omit<RegisterUser, 'confirmPassword'>) {
     url: '/auth/register',
     data: request
   });
+}
+
+async function googleAuthenticate(accessToken : string) {
+  const response = await ApiService.axiosCall<LoginResponse>({
+    method: 'POST',
+    url: `/auth/google-login?accessToken=${accessToken}`
+  });
+
+  if (response.accessToken) {
+    updateCredLocalStorage(response, true);
+    updateCredSessionStorage(response, true);
+  }
+  else {
+    throw new Error('Something bad happened. Please try again later.');
+  }
+
+  return response.user;
 }

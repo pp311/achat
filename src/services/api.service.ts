@@ -23,7 +23,9 @@ class ApiService {
     }
   }
 
-  public async axiosCallWithAuth<T>(config: AxiosRequestConfig): Promise<T> {
+  public async axiosCallWithAuth<T>(
+    config: AxiosRequestConfig,
+    errorHandler : (error : any) => any = error => console.error(error)) : Promise<T> {
     try {
       const token = sessionStorage.getItem('token') || localStorage.getItem('token');
       if (!token) {
@@ -68,7 +70,7 @@ class ApiService {
 
       return data.data;
     } catch (error) {
-      console.error(error);
+      errorHandler(error);
       throw error;
     }
   }

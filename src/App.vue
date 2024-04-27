@@ -2,10 +2,11 @@
 import { RouterView } from 'vue-router'
 import NavBar from './components/NavBar.vue'
 import Footer from './components/Footer.vue'
+import ConfirmationModal from '@/components/ConfirmationModal.vue'
 </script>
 
 <template>
-<!--  <div class="min-h-screen flex flex-col">-->
+<!--  <div class="h-screen">-->
     <header>
       <div class="wrapper">
         <nav>
@@ -17,7 +18,7 @@ import Footer from './components/Footer.vue'
     </header>
 
     <RouterView />
-    <Footer />
+  <ConfirmationModal/>
 <!--  </div>-->
 </template>
 
