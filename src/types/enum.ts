@@ -7,3 +7,8 @@ export enum ContactSortBy {
   ID = 'id',
   NAME = 'name',
 }
+
+export enum TagSortBy {
+  ID = 'id',
+  NAME = 'name',
+}

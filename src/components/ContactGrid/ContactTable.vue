@@ -11,7 +11,8 @@ const filter = ref<ContactFilter>({
   search: '',
   type: null,
   tagIds: [],
-  sortBy: ContactSortBy.ID
+  sortBy: ContactSortBy.ID,
+  isDescending: false,
 })
 
 const isLoading = ref(false)

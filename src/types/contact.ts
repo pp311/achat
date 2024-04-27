@@ -21,4 +21,5 @@ export interface ContactFilter {
   type: SourceType | null;
   tagIds: number[];
   sortBy: ContactSortBy | null;
+  isDescending: boolean;
 }
