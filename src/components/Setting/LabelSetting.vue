@@ -60,7 +60,8 @@ const addTagHandler = async () => {
   tagList.value = {} as TagList
   isLoading.value = true
   try {
-    await createTag(addTagName.value)
+    let color = getRandomColor()
+    await createTag(addTagName.value, color)
     toast.success("Tag created successfully")
   } catch {
     toast.error("Tag name is already existed")
@@ -69,6 +70,17 @@ const addTagHandler = async () => {
     isLoading.value = false
     addTagName.value = ""
   }
+}
+
+function getRandomColor() {
+  const randomInt = (min : number, max : number) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+
+    let h = randomInt(0, 360);
+    let s = randomInt(42, 98);
+    let l = randomInt(40, 90);
+    return `hsl(${h}, ${s}%, ${l}%)`;
 }
 
 </script>

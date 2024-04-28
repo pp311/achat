@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { PlusCircleIcon, XMarkIcon, PencilIcon } from '@heroicons/vue/24/solid'
-import { ref, watchEffect } from 'vue'
+import { ref, watch, watchEffect } from 'vue'
 import type { Note } from '@/types/note'
 import { getNotes, deleteNote, createNote, updateNote } from '@/services/note.service'
 import { useRoute } from 'vue-router'
@@ -32,18 +32,20 @@ const deleteNoteHandler = async (noteId: number) => {
 const updateNoteModel = ref<{
   id: number | null,
   content: string | null,
+  oldContent: string | null
 }>({
   id: null,
   content: null,
+  oldContent: null
 })
 
 const openModal = (id : number | null = null, content : string | null = null) => {
   if (id == null)
     updateNoteModel.value.content = null
   else
-    updateNoteModel.value = { id, content }
+    updateNoteModel.value = { id, content, oldContent: content }
 
-  const modal = document.getElementById('add_note') as HTMLDialogElement
+ const modal = document.getElementById('add_note') as HTMLDialogElement
   modal.showModal()
 }
 
@@ -60,7 +62,7 @@ const saveNote = async () => {
       contactId
     )
   }
-  updateNoteModel.value = { id: null, content: null }
+  updateNoteModel.value = { id: null, content: null, oldContent: null }
   notes.value = await getNotes(contactId)
 }
 </script>
@@ -89,7 +91,9 @@ const saveNote = async () => {
             <form method="dialog" class="flex gap-4">
               <!-- if there is a button in form, it will close the modal -->
               <button class="btn">Close</button>
-              <button class="btn btn-primary" @click="saveNote">Save</button>
+              <button class="btn btn-primary"
+                      :disabled="updateNoteModel.content === updateNoteModel.oldContent"
+                      @click="saveNote">Save</button>
             </form>
         </div>
       </form>

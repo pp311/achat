@@ -4,7 +4,7 @@ defineProps(['title'])
 </script>
 
 <template>
-  <div class="collapse bg-base-200 rounded-none">
+  <div class="collapse bg-base-200 rounded-none overflow-visible">
     <input type="checkbox" checked/>
     <div class="collapse-title flex flex-row justify-between items-center">
       <span class="text-xl font-bold flex items-center"><slot name="title"/></span>
