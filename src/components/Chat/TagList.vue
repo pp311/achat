@@ -58,7 +58,7 @@ const addTagHandler = async () => {
 
   isLoading.value = true
   try {
-    let id = await createTag(addTagName.value)
+    let id = await createTag(addTagName.value, getRandomColor())
     await addTagToContact(contactId, id)
     toast.success("Tag created successfully")
   } catch {
@@ -68,6 +68,17 @@ const addTagHandler = async () => {
     isLoading.value = true
     addTagName.value = ""
   }
+}
+
+function getRandomColor() {
+  const randomInt = (min : number, max : number) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+
+  let h = randomInt(0, 360);
+  let s = randomInt(42, 98);
+  let l = randomInt(40, 90);
+  return `hsl(${h}, ${s}%, ${l}%)`;
 }
 
 const addTagToContactHandler = async (tagId: number) => {

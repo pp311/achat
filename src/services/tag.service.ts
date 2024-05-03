@@ -4,7 +4,7 @@ import qs from 'qs'
 import { TagSortBy } from '@/types/enum'
 
 
-export async function getTags(filter : TagFilter, excludeIds : number[] = [], pageSize: number | null = null) {
+export async function getTags(filter : TagFilter, excludeIds : number[] = [], pageSize: number = 10) {
   return ApiService.axiosCallWithAuth<TagList>({
     method: 'GET',
     url: '/tags',

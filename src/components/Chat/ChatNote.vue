@@ -5,6 +5,7 @@ import type { Note } from '@/types/note'
 import { getNotes, deleteNote, createNote, updateNote } from '@/services/note.service'
 import { useRoute } from 'vue-router'
 import { useGlobalStore } from '@/stores/global'
+import moment from 'moment/moment'
 
 const notes = ref<Note[]>([])
 const route = useRoute()
@@ -74,7 +75,7 @@ const saveNote = async () => {
   <div v-for="note in notes" :key="note.id"
     class="w-full flex flex-col justify-between bg-base-300 rounded-lg mb-2 pt-5 px-4 border border-primary">
       <div class="flex items-center justify-start text-gray-800 gap-2">
-        <p class="text-sm text-base-content font-bold">{{ new Date(note.updatedOn.toLocaleString()).toLocaleString("vi-VN") }}</p>
+        <p class="text-sm text-base-content font-bold">{{ new Date(moment.utc(note.updatedOn).toLocaleString()).toLocaleString('vi-VN') }}</p>
         <button class="btn btn-xs btn-info rounded-full" @click="openModal(note.id, note.content)"><PencilIcon class="size-3"/></button>
         <XMarkIcon class="size-6 text-error cursor-pointer ml-auto hover:bg-red-300 rounded-full" @click="deleteNoteHandler(note.id)"/>
       </div>

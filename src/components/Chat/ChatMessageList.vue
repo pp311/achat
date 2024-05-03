@@ -1,22 +1,124 @@
 <script setup lang="ts">
+import type { Message } from '@/types/message'
+import { nextTick, onMounted, onUnmounted, type PropType, ref, watch, watchEffect } from 'vue'
+import { useScroll } from '@vueuse/core'
+import { useSignalR } from '@dreamonkey/vue-signalr'
+import { useMessageStore } from '@/stores/messageStore'
+import { storeToRefs } from 'pinia'
+import { ChevronDoubleDownIcon } from '@heroicons/vue/24/solid'
+import moment from 'moment'
 
+// const messages = ref(props.initialMessages)
+const chatbox = ref<HTMLDivElement | null>(null);
+const { y, directions } = useScroll(chatbox)
+const { y: ySmooth } = useScroll(chatbox, { behavior: 'smooth' })
+const store = useMessageStore()
+const {messages, isSending} = storeToRefs(store)
+const isScrolledToTop = ref(false)
+const initialScrollHeight = ref(0)
+const isLoading = ref(false)
+const isShowDownButton = ref(false)
+
+const signalR = useSignalR()
+
+onMounted(() => {
+  signalR.on('ReceiveMessage', async(message) => {
+    const parsedMessage = JSON.parse(message)
+    if (parsedMessage.contactId !== store.contactId) return
+    messages.value.push(parsedMessage)
+    if (!parsedMessage.isEcho) {
+      isShowDownButton.value = true
+    }
+    else{
+      isSending.value = false
+    }
+  })
+})
+
+const handleScroll = async () => {
+  if (chatbox.value == null) return
+  if (chatbox.value.scrollTop <= 5  && directions.top && !store.isLastMessage) {
+    if (!isScrolledToTop.value)
+      initialScrollHeight.value = chatbox.value!.scrollHeight
+
+    isLoading.value = true
+    const oldScrollHeight = chatbox.value!.scrollHeight
+    isScrolledToTop.value = true
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await store.getFacebookMessages(messages.value[0].id, 1)
+
+    if (!store.isLastMessage) {
+      await nextTick()
+      y.value = chatbox.value?.scrollHeight - oldScrollHeight
+    }
+    isLoading.value = false
+  }
+}
+
+const handleDownButton = () => {
+  ySmooth.value = chatbox.value!.scrollHeight
+  isShowDownButton.value = false
+}
+
+// SET SCROLL TO BOTTOM
+watch([messages], async () => {
+  if (chatbox.value != null && (!isScrolledToTop.value || chatbox.value?.scrollHeight - y.value < initialScrollHeight.value)){
+    await nextTick();
+    y.value = chatbox.value!.scrollHeight;
+    isShowDownButton.value = false
+  }
+}, {deep: true, immediate: true});
+
+watch(isSending, async () => {
+  if (isSending.value) {
+    console.log("fire")
+    await nextTick()
+    y.value = chatbox.value!.scrollHeight
+  }
+})
 </script>
 
 <template>
+  <div ref="chatbox"
+       @scroll="handleScroll"
+       class="overflow-auto w-full mb-3">
+    <div class="w-full flex justify-center my-4" :class="{invisible: !isLoading}">
+      <div class="loading"></div>
+    </div>
 
-  <div>
-    <div class="chat chat-start">
-      <div class="chat-bubble chat-bubble-info">It's over Anakin, <br/>I have the high ground.</div>
+      <div class="btn btn-sm btn-primary -translate-x-1/2 animate-bounce rounded-full absolute bottom-24 left-[47%]"
+           :class="{invisible: !isShowDownButton}"
+           @click="handleDownButton">
+        <ChevronDoubleDownIcon class="size-4"/>
     </div>
-    <div class="chat chat-end">
-      <div class="chat-bubble  chat-bubble-info">You underestimate my power!</div>
+    <!--      <div class="tooltip"-->
+    <!--           :class="{ 'tooltip-left': message.isEcho, 'tooltip-right': !message.isEcho }"-->
+    <!--           :data-tip="new Date(message.updatedOn.toLocaleString()).toLocaleString('vi-VN')">-->
+    <div class="chat p-0 mb-3"
+         :class="{'chat-start': !message.isEcho, 'chat-end': message.isEcho}"
+         v-for="message in messages"
+         :key="message.id">
+        <div class="chat-bubble chat-bubble-info relative group"
+             :data-tooltip-target="'tt' + message.id"
+             data-tooltip-placement="right"
+        >{{message.content}}
+          <div :id="'tt' + message.id" role="tooltip"
+               :class="[message.isEcho ? 'right-[115%]' : 'left-[115%]']"
+               class="absolute w-[150px] z-100 tooltip  inline-block bottom-1 opacity-0 group-hover:opacity-85 px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm dark:bg-gray-700">
+            {{new Date(moment.utc(message.updatedOn).toLocaleString()).toLocaleString('vi-VN')}}
+            <div class="tooltip-arrow" data-popper-arrow></div>
+        </div>
+
+      </div>
     </div>
-    <div class="chat chat-start">
-      <div class="chat-bubble chat-bubble-info text-wrap break-words max-w-[40%]">It's over Anakin, <br/>I have the high ground aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.</div>
+
+    <div class="chat p-0 mb-3 chat-end">
+
+      <div class="chat-bubble chat-bubble-info flex items-center opacity-60" v-if="isSending">
+        Sending<span class=" ml-2 loading loading-dots loading-xs"></span>
+      </div>
     </div>
-    <div class="chat chat-start" v-for="i in 100">
-      <div class="chat-bubble chat-bubble-info">It's over Anakin, <br/>I have the high ground.</div>
-    </div>
+
   </div>
 </template>
 
