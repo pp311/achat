@@ -14,7 +14,8 @@ import 'vue3-toastify/dist/index.css';
 const app = createApp(App)
 
 app.use(vue3GoogleLogin, {
-    clientId: '291666639911-cbb2rv1djk8j0jdb73iafombum6n7tf3.apps.googleusercontent.com'
+    clientId: '35933257036-qto3kbo0s1f0702skb4ekaoero4c5qi8.apps.googleusercontent.com',
+
 })
 const connection = new HubConnectionBuilder()
     .withUrl('http://localhost:8080/signalr', {

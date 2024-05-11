@@ -98,9 +98,12 @@ watch(isSending, async () => {
          :class="{'chat-start': !message.isEcho, 'chat-end': message.isEcho}"
          v-for="message in messages"
          :key="message.id">
+
+<!--      Text message-->
         <div class="chat-bubble chat-bubble-info relative group"
              :data-tooltip-target="'tt' + message.id"
              data-tooltip-placement="right"
+             v-if="message.attachments.length === 0"
         >{{message.content}}
           <div :id="'tt' + message.id" role="tooltip"
                :class="[message.isEcho ? 'right-[115%]' : 'left-[115%]']"
@@ -108,8 +111,41 @@ watch(isSending, async () => {
             {{new Date(moment.utc(message.updatedOn).toLocaleString()).toLocaleString('vi-VN')}}
             <div class="tooltip-arrow" data-popper-arrow></div>
         </div>
-
       </div>
+
+<!--      Image -->
+      <div class="chat-bubble chat-bubble-info relative group max-w-[50%]"
+           :data-tooltip-target="'tt' + message.id"
+           data-tooltip-placement="right"
+           v-else-if="message.attachments[0].type === 'image'"
+      >
+        <img :src="message.attachments[0].url">
+        <div :id="'tt' + message.id" role="tooltip"
+             :class="[message.isEcho ? 'right-[115%]' : 'left-[115%]']"
+             class="absolute w-[150px] z-100 tooltip  inline-block bottom-1 opacity-0 group-hover:opacity-85 px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm dark:bg-gray-700">
+          {{new Date(moment.utc(message.updatedOn).toLocaleString()).toLocaleString('vi-VN')}}
+          <div class="tooltip-arrow" data-popper-arrow></div>
+        </div>
+      </div>
+
+<!--      file-->
+      <div class="chat-bubble chat-bubble-info relative group max-w-[50%]"
+           :data-tooltip-target="'tt' + message.id"
+           data-tooltip-placement="right"
+           v-else-if="message.attachments[0].type === 'file'"
+      >
+        <a :href="message.attachments[0].url" target="_blank" class="flex items-center gap-2">
+          <DocumentIcon class="size-8"/>
+          <span>{{message.attachments[0].fileName}}</span>
+        </a>
+        <div :id="'tt' + message.id" role="tooltip"
+             :class="[message.isEcho ? 'right-[115%]' : 'left-[115%]']"
+             class="absolute w-[150px] z-100 tooltip  inline-block bottom-1 opacity-0 group-hover:opacity-85 px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm dark:bg-gray-700">
+          {{new Date(moment.utc(message.updatedOn).toLocaleString()).toLocaleString('vi-VN')}}
+          <div class="tooltip-arrow" data-popper-arrow></div>
+        </div>
+      </div>
+
     </div>
 
     <div class="chat p-0 mb-3 chat-end">

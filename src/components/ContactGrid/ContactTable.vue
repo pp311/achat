@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import Pagination from '@/components/Pagination.vue'
-
 import { ref, watchEffect } from 'vue'
 import type { ContactFilter, ContactListItem } from '@/types/contact'
 import { useContactListStore } from '@/stores/contactListStore'
-import { ContactSortBy } from '@/types/enum'
+import { ContactSortBy, SourceType } from '@/types/enum'
 import { UserCircleIcon } from '@heroicons/vue/24/solid'
 
 const filter = ref<ContactFilter>({
@@ -67,12 +65,13 @@ watchEffect(async () => {
         </td>
         <td>
           <div class="size-8">
-            <img src="../../assets/facebook.svg">
+            <img v-if="contact.sourceType == SourceType.FACEBOOK" src="../../assets/facebook.svg">
+            <img v-if="contact.sourceType == SourceType.GOOGLE" src="../../assets/gmail.svg">
           </div>
         </td>
         <td>15:46 12-12-2024</td>
         <th>
-          <RouterLink :to="'/chat/' + contact.id">
+          <RouterLink :to="'/chat/' + contact.sourceType.toLowerCase() + '/' + contact.id">
             <button class="btn btn-ghost btn-xs">Chat now</button>
           </RouterLink>
         </th>

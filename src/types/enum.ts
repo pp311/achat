@@ -1,6 +1,6 @@
 export enum SourceType {
-  GOOGLE = 'google',
-  FACEBOOK = 'facebook',
+  GOOGLE = 'Gmail',
+  FACEBOOK = 'Facebook',
 }
 
 export enum ContactSortBy {

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { getFacebookMessages, sendFacebookMessage } from '@/services/message.service'
-import type { Message } from '@/types/message'
+import type { Message, UploadFacebookAttachmentResponse } from '@/types/message'
 
 export const useMessageStore = defineStore('message',  {
   state: () => ({
@@ -24,8 +24,8 @@ export const useMessageStore = defineStore('message',  {
       this.messages = [...response, ...this.messages];
     },
 
-    sendFacebookMessage: async function(message: string) {
-      await sendFacebookMessage(message, this.contactId);
+    sendFacebookMessage: async function(message: string,  attachment : UploadFacebookAttachmentResponse | null = null, errorHandler : null | Function = null){
+      await sendFacebookMessage(message, this.contactId, attachment, errorHandler);
     }
   },
 

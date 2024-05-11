@@ -24,7 +24,7 @@ const router = createRouter({
       component: () => import('../views/ContactGridView.vue'),
     },
     {
-      path: '/chat/:id',
+      path: '/chat/:sourceType/:id',
       name: 'chat',
       component: () => import('../views/ChatView.vue')
     },

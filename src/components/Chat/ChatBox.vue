@@ -4,7 +4,9 @@ import ChatMessageList from '@/components/Chat/ChatMessageList.vue'
 import { onMounted, onUnmounted, ref, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { useMessageStore } from '@/stores/messageStore'
+import { uploadFacebookAttachment } from '@/services/message.service'
 import { FileType } from '@/types/enum'
+import { toast } from 'vue3-toastify'
 
 const route = useRoute()
 const contactId = parseInt(route.params.id as string)
@@ -12,17 +14,30 @@ const store = useMessageStore()
 const input = ref<string>("")
 const file = ref<File | null>(null)
 const fileType = ref<FileType | null>(null)
+const fileInput = ref<HTMLInputElement | null>(null)
 
 watchEffect(async () => {
   await store.getFacebookMessages(0, contactId);
 })
 
 const handleSendMessage = async () => {
-  if (input.value === "") return
-  const content = input.value
-  input.value = ""
   store.isSending = true
-  await store.sendFacebookMessage(content)
+  try{
+    if (file.value !== null && fileType.value !== null) {
+      const attachment = await uploadFacebookAttachment(file.value)
+      let task = store.sendFacebookMessage(input.value, attachment, (msg : string)  => toast.error(msg))
+      file.value = null
+      fileType.value = null
+      input.value = ""
+      await task;
+    } else if (input.value !== "") {
+      let task = store.sendFacebookMessage(input.value, null, (msg: string) => toast.error(msg))
+      input.value = ""
+      await task;
+    }
+  } catch (e) {
+    store.isSending = false
+  }
 }
 
 const onDrop = (e: DragEvent) => {
@@ -30,13 +45,27 @@ const onDrop = (e: DragEvent) => {
   const files = e.dataTransfer?.files
   if (files) {
     file.value = files[0]
+    console.log(file.value.type)
     switch (file.value.type) {
       case "image/jpeg":
       case "image/png":
+      case "image/svg+xml":
         fileType.value = FileType.IMAGE
         break
-      default:
+      case "application/pdf":
+      case "application/msword":
+      case "application/vnd.ms-excel":
+      case "application/vnd.ms-powerpoint":
+      case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+      case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+      case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
         fileType.value = FileType.FILE
+        break
+      case "video/mp4":
+        fileType.value = FileType.VIDEO
+        break
+      default:
+        fileType.value = null
     }
   }
 }
@@ -49,10 +78,23 @@ const onChange = (e: Event) => {
     switch (file.value.type) {
       case "image/jpeg":
       case "image/png":
+      case "image/svg+xml":
         fileType.value = FileType.IMAGE
         break
-      default:
+      case "application/pdf":
+      case "application/msword":
+      case "application/vnd.ms-excel":
+      case "application/vnd.ms-powerpoint":
+      case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+      case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+      case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
         fileType.value = FileType.FILE
+        break
+      case "video/mp4":
+        fileType.value = FileType.VIDEO
+        break
+      default:
+        fileType.value = null
     }
   }
 }
@@ -84,6 +126,7 @@ const generateURL = (file : File) => {
 }
 
 function humanFileSize(size : number) {
+  console.log(size)
   let i = size == 0 ? 0 : Math.floor( Math.log(size) / Math.log(1024) );
   return +((size / Math.pow(1024, i)).toFixed(2)) + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
 }
@@ -95,7 +138,7 @@ function humanFileSize(size : number) {
     <div class="flex flex-row items-center gap-2 max-h-20 pt-2 w-full">
       <div class="avatar">
         <div class="w-16 rounded-full">
-          <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5Tlh6y3QIXtxABWjJYR64qzVt0UItrVnCnGr3eA-XYA&s" />
         </div>
       </div>
 
@@ -116,12 +159,14 @@ function humanFileSize(size : number) {
 <!--    INPUT-->
     <div class="mt-auto mb-2 w-full" @drop.prevent="onDrop">
       <div
-        v-if="file !== null"
+        v-if="file !== null && fileType !== null"
         class="w-full h-16 p-4 flex items-center font-bold text-lg border border-dashed border-primary">
+
         <img v-if="fileType === FileType.IMAGE" :src="generateURL(file!)" class="size-12" />
         <DocumentIcon v-else class="size-12 mr-2"/>
+
         <div class="flex flex-col ml-4">
-          <span class="font-bold">{{file?.name}}</span>
+          <span class="font-bold">{{ file?.name }}</span>
           <span class="text-sm">
           {{humanFileSize(file?.size || 0)}}
           </span>
@@ -136,8 +181,8 @@ function humanFileSize(size : number) {
         id="fileInput"
         class="hidden-input"
         @change="onChange"
-        ref="file"
-        accept=".jpg,.jpeg,.png"
+        ref="fileInput"
+        accept=".jpg,.jpeg,.png,.svg,.pdf,.doc,.docx,.mp4"
       />
 
       <div class="w-full flex flex-row ">
@@ -147,7 +192,7 @@ function humanFileSize(size : number) {
                   v-model="input"
                   class="grow h-full textarea rounded-r-none"
                   placeholder="Write your messages..." />
-        <div class="btn btn-primary rounded-l-none" :class="{'btn-disabled': input === ''}" @click="handleSendMessage">
+        <div class="btn btn-primary rounded-l-none" :class="{'btn-disabled': input === '' && (file === null || fileType === null) }" @click="handleSendMessage">
           <PaperAirplaneIcon class="size-6"/>
         </div>
       </div>

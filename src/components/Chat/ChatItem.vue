@@ -7,7 +7,7 @@
   <div class="flex flex-row mt-4 gap-2">
     <div class="avatar relative">
       <div class="w-16 rounded-full">
-        <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5Tlh6y3QIXtxABWjJYR64qzVt0UItrVnCnGr3eA-XYA&s" />
       </div>
       <div class="absolute bottom-0 right-0 size-6">
         <img src="../../assets/facebook.svg" />
