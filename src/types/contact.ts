@@ -3,15 +3,17 @@ import type { PagingModel } from '@/types/base'
 import { ContactSortBy } from '@/types/enum'
 
 export interface ContactList extends PagingModel {
-  items: ContactListItem[];
+  items: ContactInfo[];
 }
 
-export interface ContactListItem {
+export interface ContactInfo {
   id: number;
   name: string;
   email: string;
   avatarUrl: null | string;
   sourceType: SourceType;
+  lastMessage: string;
+  isRead: boolean;
   createdOn: Date;
   updatedOn: Date;
 }

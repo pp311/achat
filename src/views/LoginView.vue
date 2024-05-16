@@ -56,7 +56,7 @@ const login = () => {
     googleSdkLoaded((google) => {
         google.accounts.oauth2.initCodeClient({
             client_id: '35933257036-qto3kbo0s1f0702skb4ekaoero4c5qi8.apps.googleusercontent.com',
-            scope: 'email profile openid https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly',
+            scope: 'email profile openid https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.labels',
             callback: (response) => {
                 console.log("Handle the response", response)
             }

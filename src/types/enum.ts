@@ -6,6 +6,7 @@ export enum SourceType {
 export enum ContactSortBy {
   ID = 'id',
   NAME = 'name',
+  LAST_MESSAGE = 'lastMessage',
 }
 
 export enum TagSortBy {

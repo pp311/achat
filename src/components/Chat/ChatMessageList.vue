@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Message } from '@/types/message'
 import { nextTick, onMounted, onUnmounted, type PropType, ref, watch, watchEffect } from 'vue'
 import { useScroll } from '@vueuse/core'
 import { useSignalR } from '@dreamonkey/vue-signalr'
@@ -7,17 +6,19 @@ import { useMessageStore } from '@/stores/messageStore'
 import { storeToRefs } from 'pinia'
 import { ChevronDoubleDownIcon } from '@heroicons/vue/24/solid'
 import moment from 'moment'
+import { useRoute } from 'vue-router'
 
-// const messages = ref(props.initialMessages)
 const chatbox = ref<HTMLDivElement | null>(null);
 const { y, directions } = useScroll(chatbox)
 const { y: ySmooth } = useScroll(chatbox, { behavior: 'smooth' })
 const store = useMessageStore()
-const {messages, isSending} = storeToRefs(store)
+const {messages, isSending, isAllAttachmentsLoaded} = storeToRefs(store)
 const isScrolledToTop = ref(false)
 const initialScrollHeight = ref(0)
 const isLoading = ref(false)
 const isShowDownButton = ref(false)
+const route = useRoute()
+const contactId = parseInt(route.params.id as string)
 
 const signalR = useSignalR()
 
@@ -45,7 +46,7 @@ const handleScroll = async () => {
     const oldScrollHeight = chatbox.value!.scrollHeight
     isScrolledToTop.value = true
     await new Promise(resolve => setTimeout(resolve, 1000));
-    await store.getFacebookMessages(messages.value[0].id, 1)
+    await store.getFacebookMessages(messages.value[0].id, contactId)
 
     if (!store.isLastMessage) {
       await nextTick()
@@ -61,8 +62,8 @@ const handleDownButton = () => {
 }
 
 // SET SCROLL TO BOTTOM
-watch([messages], async () => {
-  if (chatbox.value != null && (!isScrolledToTop.value || chatbox.value?.scrollHeight - y.value < initialScrollHeight.value)){
+watch([messages, isAllAttachmentsLoaded], async () => {
+  if (chatbox.value != null && isAllAttachmentsLoaded && (!isScrolledToTop.value || chatbox.value?.scrollHeight - y.value < initialScrollHeight.value)){
     await nextTick();
     y.value = chatbox.value!.scrollHeight;
     isShowDownButton.value = false
@@ -76,6 +77,14 @@ watch(isSending, async () => {
     y.value = chatbox.value!.scrollHeight
   }
 })
+
+const handleLoadImage = (url: string) => {
+  console.log(`${url} loaded`)
+  store.loadingAttachments = store.loadingAttachments.filter(attachment => attachment !== url)
+  if (store.loadingAttachments.length === 0) {
+    store.isAllAttachmentsLoaded = true
+  }
+}
 </script>
 
 <template>
@@ -134,7 +143,7 @@ watch(isSending, async () => {
            data-tooltip-placement="right"
            v-else-if="message.attachments[0].type === 'file'"
       >
-        <a :href="message.attachments[0].url" target="_blank" class="flex items-center gap-2">
+        <a :href="message.attachments[0].url" @load="handleLoadImage(message.attachments[0].url)" target="_blank" class="flex items-center gap-2">
           <DocumentIcon class="size-8"/>
           <span>{{message.attachments[0].fileName}}</span>
         </a>

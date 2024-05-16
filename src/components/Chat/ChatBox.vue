@@ -135,25 +135,7 @@ function humanFileSize(size : number) {
 <template>
   <div class="w-[55%] overflow-scroll bg-base-300 flex flex-col items-start px-4">
 <!--HEADER-->
-    <div class="flex flex-row items-center gap-2 max-h-20 pt-2 w-full">
-      <div class="avatar">
-        <div class="w-16 rounded-full">
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5Tlh6y3QIXtxABWjJYR64qzVt0UItrVnCnGr3eA-XYA&s" />
-        </div>
-      </div>
-
-      <div class="flex flex-col">
-        <span class="font-bold text-md">Chatting with</span>
-        <span class="font-bold text-2xl">Full Name</span>
-      </div>
-
-      <div class="ml-auto">
-        <img class="size-12" src="../../assets/facebook.svg">
-      </div>
-    </div>
-    
-    <div class="divider m-1"></div>
-
+    <slot/>
 <!--    MESSAGES-->
     <ChatMessageList />
 <!--    INPUT-->
@@ -197,7 +179,6 @@ function humanFileSize(size : number) {
         </div>
       </div>
     </div>
-
   </div>
 </template>
 

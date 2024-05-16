@@ -10,6 +10,8 @@ import { HttpTransportType, HubConnectionBuilder, type IHttpConnectionOptions } 
 import { VueSignalR, type VueSignalRConfig } from '@dreamonkey/vue-signalr';
 import Vue3Toasity, { type ToastContainerOptions } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 const app = createApp(App)
 
@@ -37,6 +39,8 @@ router.beforeEach((to, from, next) => {
 })
 
 app.use(VueSignalR, { connection } as VueSignalRConfig)
+
+app.component('QuillEditor', QuillEditor)
 
 app.use(Vue3Toasity, {
     autoClose: 5000,

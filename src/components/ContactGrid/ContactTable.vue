@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
-import type { ContactFilter, ContactListItem } from '@/types/contact'
+import type { ContactFilter, ContactInfo } from '@/types/contact'
 import { useContactListStore } from '@/stores/contactListStore'
 import { ContactSortBy, SourceType } from '@/types/enum'
 import { UserCircleIcon } from '@heroicons/vue/24/solid'
+import moment from 'moment'
 
 const filter = ref<ContactFilter>({
   search: '',
@@ -15,13 +16,14 @@ const filter = ref<ContactFilter>({
 
 const isLoading = ref(false)
 
-const contactItems = ref<ContactListItem[]>([])
+const contactItems = ref<ContactInfo[]>([])
 
 const store = useContactListStore()
 
 watchEffect(async () => {
   isLoading.value = true
-  contactItems.value = await store.getContactList(filter.value)
+  contactItems.value = []
+  contactItems.value = await store.getContactList()
   isLoading.value = false
 })
 
@@ -69,9 +71,11 @@ watchEffect(async () => {
             <img v-if="contact.sourceType == SourceType.GOOGLE" src="../../assets/gmail.svg">
           </div>
         </td>
-        <td>15:46 12-12-2024</td>
+        <td>
+          {{new Date(moment.utc(contact.createdOn).toLocaleString()).toLocaleString('vi-VN').split(' ')[1] }}
+        </td>
         <th>
-          <RouterLink :to="'/chat/' + contact.sourceType.toLowerCase() + '/' + contact.id">
+          <RouterLink :to="'/chat/' + contact.id">
             <button class="btn btn-ghost btn-xs">Chat now</button>
           </RouterLink>
         </th>

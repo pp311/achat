@@ -1,5 +1,6 @@
 import ApiService from '@/services/api.service'
-import type { ContactFilter, ContactList } from '@/types/contact'
+import type { ContactFilter, ContactList, ContactInfo } from '@/types/contact'
+import qs from 'qs'
 
 
 export async function getContacts(filter: ContactFilter, pageNumber: number, pageSize: number | null = null) {
@@ -12,7 +13,17 @@ export async function getContacts(filter: ContactFilter, pageNumber: number, pag
       tagIds: filter.tagIds,
       sortBy: filter.sortBy,
       pageNumber,
-      pageSize
+      pageSize: pageSize || 10
+    },
+    paramsSerializer: (params) => {
+      return qs.stringify(params,{arrayFormat: "repeat"})
     }
+  });
+}
+
+export async function getContact(id: number) {
+  return ApiService.axiosCallWithAuth<ContactInfo>({
+    method: 'GET',
+    url: `/contacts/${id}`
   });
 }

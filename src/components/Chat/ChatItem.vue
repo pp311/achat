@@ -1,27 +1,46 @@
 <script setup lang="ts">
 
+import type { ContactInfo } from '@/types/contact'
+import { SourceType } from '@/types/enum'
+import type { PropType } from 'vue'
+import { UserCircleIcon } from '@heroicons/vue/24/solid'
+import { useRouter } from 'vue-router'
+
+const props = defineProps({
+  contact: {
+    type: Object as PropType<ContactInfo>,
+    required: true
+  }
+});
+
+const router = useRouter()
+
+const handleContactClick = () => {
+  router.replace(`/chat/${props.contact.id}`)
+}
+
 </script>
 
 <template>
 
-  <div class="flex flex-row mt-4 gap-2">
-    <div class="avatar relative">
-      <div class="w-16 rounded-full">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5Tlh6y3QIXtxABWjJYR64qzVt0UItrVnCnGr3eA-XYA&s" />
-      </div>
-      <div class="absolute bottom-0 right-0 size-6">
-        <img src="../../assets/facebook.svg" />
-      </div>
-    </div>
+    <div @click="handleContactClick" class="flex flex-row py-4 gap-2 hover:bg-base-300 cursor-pointer rounded-xl">
+        <div class="avatar relative">
+            <div class="w-16 rounded-full">
+              <img v-if="props.contact.avatarUrl" :src="props.contact.avatarUrl" alt="" />
+              <UserCircleIcon v-else class="size-full block" />
+            </div>
+            <div class="absolute bottom-0 right-0 size-6">
+              <img v-if="props.contact.sourceType == SourceType.FACEBOOK" src="../../assets/facebook.svg" class="size-12">
+              <img v-if="props.contact.sourceType == SourceType.GOOGLE" src="../../assets/gmail.svg"  class="size-12">
+            </div>
+        </div>
 
-    <div>
-      <div class="font-bold">Homer Simpson</div>
-      <div class="text-sm line-clamp-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+        <div class="ml-2">
+            <div class="font-bold mb-2 text-lg">{{props.contact.name || props.contact.email}}</div>
+            <div class="text-sm line-clamp-1">{{props.contact.lastMessage}}</div>
+        </div>
     </div>
-  </div>
-  <div class="divider"></div>
+    <div class="divider my-0"></div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
