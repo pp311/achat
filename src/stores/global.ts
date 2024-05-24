@@ -1,16 +1,18 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { LoginResponse, UserType } from '@/types/user'
+import type { Source } from '@/types/source'
 
 export const useGlobalStore = defineStore('global',  {
-  state: () => ({
+  state: ()=> ({
     user: ref<UserType | null>(null),
     role: ref<string>(''),
     confirmationModal: ref<{
       title: string,
       message: string,
       action: () => void
-    }>({title: '', message: '', action: () => {}})
+    }>({title: '', message: '', action: () => {}}),
+    sources: ref<Source[]>([]),
   }),
 
   actions: {

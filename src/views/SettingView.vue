@@ -6,10 +6,10 @@ import LabelSetting from '@/components/Setting/LabelSetting.vue'
 
 <template>
   <div role="tablist" class="tabs tabs-lg tabs-lifted p-8">
-    <input type="radio" name="my_tabs_2" role="tab" class="tab  [--tab-border-color:oklch(var(--p))] border-primary" aria-label="Personal Info" />
-    <div role="tabpanel" class="tab-content bg-base-100 border-primary rounded-box p-6">Personal Info</div>
+<!--    <input type="radio" name="my_tabs_2" role="tab" class="tab  [&#45;&#45;tab-border-color:oklch(var(&#45;&#45;p))] border-primary" aria-label="Personal Info" />-->
+<!--    <div role="tabpanel" class="tab-content bg-base-100 border-primary rounded-box p-6">Personal Info</div>-->
 
-    <input type="radio" name="my_tabs_2" role="tab" class="tab  [--tab-border-color:oklch(var(--p))] border-primary" aria-label="Sources" />
+    <input type="radio" name="my_tabs_2" role="tab" class="tab  [--tab-border-color:oklch(var(--p))] border-primary" aria-label="Sources" checked />
     <div role="tabpanel" class="tab-content bg-base-100 border-primary rounded-box p-6">
       <SourceSetting/>
     </div>
@@ -19,7 +19,7 @@ import LabelSetting from '@/components/Setting/LabelSetting.vue'
       <CustomInfoSetting/>
     </div>
 
-    <input type="radio" name="my_tabs_2" role="tab" class="tab  [--tab-border-color:oklch(var(--p))] border-primary" aria-label="Labels" checked />
+    <input type="radio" name="my_tabs_2" role="tab" class="tab  [--tab-border-color:oklch(var(--p))] border-primary" aria-label="Labels"  />
     <div role="tabpanel" class="tab-content bg-base-100 border-primary rounded-box p-6">
       <LabelSetting/>
     </div>

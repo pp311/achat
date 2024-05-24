@@ -24,11 +24,12 @@ const contactTags = ref<Tag[]>([])
 const isFirstLoad = ref(false)
 const searchTerm = ref('')
 
-watchEffect(async () => {
+watch(() => route.params.id, async () => {
   isDropDownLoading.value = true
+  const contactId = parseInt(route.params.id as string)
   contactTags.value = (await getContactTags(contactId))
   isDropDownLoading.value = false
-})
+}, {immediate: true})
 
 watch(searchTerm, debounce(() => {
   filter.value.search = searchTerm.value

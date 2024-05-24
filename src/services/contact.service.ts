@@ -12,6 +12,7 @@ export async function getContacts(filter: ContactFilter, pageNumber: number, pag
       type: filter.type,
       tagIds: filter.tagIds,
       sortBy: filter.sortBy,
+      isDescending: filter.isDescending,
       pageNumber,
       pageSize: pageSize || 10
     },

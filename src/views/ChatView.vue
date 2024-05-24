@@ -34,7 +34,7 @@ watch(() => route.params.id,async () => {
       <ChatBoxHeader/>
     </MailBox>
 
-    <div v-else  class="w-[55%] bg-base-300 flex justify-center items-center flex-col px-4">
+    <div v-else  class="w-[58%] bg-base-300 flex justify-center items-center flex-col px-4">
 
       <div class="loading loading-lg"></div>
 

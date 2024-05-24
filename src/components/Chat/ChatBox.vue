@@ -15,9 +15,14 @@ const input = ref<string>("")
 const file = ref<File | null>(null)
 const fileType = ref<FileType | null>(null)
 const fileInput = ref<HTMLInputElement | null>(null)
+const isAbleToSend = ref(false)
 
 watchEffect(async () => {
   await store.getFacebookMessages(0, contactId);
+})
+
+watchEffect(() => {
+  isAbleToSend.value = input.value !== "" || (file.value !== null && fileType.value !== null)
 })
 
 const handleSendMessage = async () => {
@@ -35,7 +40,7 @@ const handleSendMessage = async () => {
       input.value = ""
       await task;
     }
-  } catch (e) {
+  } finally {
     store.isSending = false
   }
 }
@@ -133,7 +138,7 @@ function humanFileSize(size : number) {
 </script>
 
 <template>
-  <div class="w-[55%] overflow-scroll bg-base-300 flex flex-col items-start px-4">
+  <div class="w-[58%] overflow-scroll bg-base-300 flex flex-col items-start px-4">
 <!--HEADER-->
     <slot/>
 <!--    MESSAGES-->
@@ -174,7 +179,7 @@ function humanFileSize(size : number) {
                   v-model="input"
                   class="grow h-full textarea rounded-r-none"
                   placeholder="Write your messages..." />
-        <div class="btn btn-primary rounded-l-none" :class="{'btn-disabled': input === '' && (file === null || fileType === null) }" @click="handleSendMessage">
+        <div class="btn btn-primary rounded-l-none" :class="{'btn-disabled': !isAbleToSend }" @click="handleSendMessage">
           <PaperAirplaneIcon class="size-6"/>
         </div>
       </div>

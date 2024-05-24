@@ -1,5 +1,6 @@
 import ApiService from '@/services/api.service'
-import type { Message, UploadFacebookAttachmentResponse } from '@/types/message'
+import type { GmailThreadList, Message, UploadFacebookAttachmentResponse } from '@/types/message'
+import qs from 'qs'
 
 
 export async function getFacebookMessages(contactId : number, offsetId : number = 0, limit : number = 20) {
@@ -36,6 +37,53 @@ export async function uploadFacebookAttachment(file : File) {
     data: formData,
     headers: {
       'Content-Type': 'multipart/form-data'
+    }
+  });
+}
+
+export async function getGmailThreads(contactId : number, pageNumber : number, pageSize : number | null = null) {
+  return ApiService.axiosCallWithAuth<GmailThreadList>({
+    method: 'GET',
+    url: '/messages/gmail',
+    params: {
+      contactId,
+      pageNumber: pageNumber,
+      isDescending: true,
+      pageSize: pageSize || 25
+    }
+  });
+}
+
+export async function getThreadMessages(threadId : string, contactId: number) {
+  return ApiService.axiosCallWithAuth<Message[]>({
+    method: 'GET',
+    url: `/messages/gmail/contacts/${contactId}/threads/${threadId}`
+  });
+}
+
+export async function sendGmailMessage(message : string, subject : string, contactId : number, replyMessageId : number | null = null) {
+  return ApiService.axiosCallWithAuth<Message>({
+    method: 'POST',
+    url: `/messages/gmail`,
+    data: {
+      contactId,
+      message,
+      subject,
+      replyMessageId: replyMessageId || 0
+    }
+  });
+}
+
+export async function deleteGmailThread(contactId: number, threadIds: string[]){
+  return ApiService.axiosCallWithAuth({
+    method: 'DELETE',
+    url: '/messages/gmail/threads',
+    params: {
+      threadIds,
+      contactId
+    },
+    paramsSerializer: (params) => {
+      return qs.stringify(params,{arrayFormat: "repeat"})
     }
   });
 }

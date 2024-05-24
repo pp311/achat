@@ -1,7 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { getFacebookMessages, sendFacebookMessage } from '@/services/message.service'
-import type { Message, UploadFacebookAttachmentResponse } from '@/types/message'
+import {
+  getFacebookMessages,
+  getGmailThreads,
+  getThreadMessages,
+  sendFacebookMessage
+} from '@/services/message.service'
+import type { GmailThreadList, Message, UploadFacebookAttachmentResponse } from '@/types/message'
 import type { ContactFilter, ContactInfo, ContactList } from '@/types/contact'
 import { getContact, getContacts } from '@/services/contact.service'
 import { ContactSortBy } from '@/types/enum'
@@ -22,7 +27,7 @@ export const useMessageStore = defineStore('message',  {
       type: null,
       tagIds: [],
       sortBy: ContactSortBy.LAST_MESSAGE,
-      isDescending: false,
+      isDescending: true,
     }),
     pagingInfo : ref<PagingModel>({
       pageNumber: 1,
@@ -31,7 +36,11 @@ export const useMessageStore = defineStore('message',  {
       hasPreviousPage: false,
       hasNextPage: false,
     }),
-    contactList: ref<ContactInfo[]>([])
+    contactList: ref<ContactInfo[]>([]),
+
+    threadList: ref<GmailThreadList | null>(null),
+    threadPageSize: ref<number>(25),
+    threadId: ref<string>(''),
   }),
 
   actions: {
@@ -58,7 +67,7 @@ export const useMessageStore = defineStore('message',  {
     },
 
     getContact: async function (id: number) {
-      if (this.contactInfo === null || this.contactInfo.id !== id) {
+      if (this.contactInfo == null || this.contactInfo == undefined || this.contactInfo.id !== id) {
         this.contactInfo = null;
         this.contactInfo = await getContact(id)
       }
@@ -77,7 +86,21 @@ export const useMessageStore = defineStore('message',  {
       this.pagingInfo.hasNextPage = response.hasNextPage
 
       this.contactList = response.items
-    }
+    },
+
+    getGmailThreads: async function(contactId: number, pageNumber: number | null = null) {
+      if (contactId !== 0 && contactId !== this.contactId){
+        this.contactId = contactId;
+        this.threadList = null;
+      }
+      this.threadList = await getGmailThreads(this.contactId, pageNumber || 1, this.threadPageSize)
+    },
+
+    getThreadMessages: async function(threadId: string) {
+      this.messages = []
+      this.threadId = threadId
+      this.messages = await getThreadMessages(threadId, this.contactId)
+    },
   },
 
 })

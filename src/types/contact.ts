@@ -12,6 +12,8 @@ export interface ContactInfo {
   email: string;
   avatarUrl: null | string;
   sourceType: SourceType;
+  sourceName: string;
+  sourceEmail: string | null;
   lastMessage: string;
   isRead: boolean;
   createdOn: Date;

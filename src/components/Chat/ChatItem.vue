@@ -5,6 +5,7 @@ import { SourceType } from '@/types/enum'
 import type { PropType } from 'vue'
 import { UserCircleIcon } from '@heroicons/vue/24/solid'
 import { useRouter } from 'vue-router'
+import {convert} from 'html-to-text'
 
 const props = defineProps({
   contact: {
@@ -35,9 +36,9 @@ const handleContactClick = () => {
             </div>
         </div>
 
-        <div class="ml-2">
+        <div class="ml-2 overflow-x-hidden">
             <div class="font-bold mb-2 text-lg">{{props.contact.name || props.contact.email}}</div>
-            <div class="text-sm line-clamp-1">{{props.contact.lastMessage}}</div>
+            <div class="text-sm line-clamp-1">{{convert(props.contact.lastMessage)}}</div>
         </div>
     </div>
     <div class="divider my-0"></div>

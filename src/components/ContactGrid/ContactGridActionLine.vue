@@ -45,7 +45,7 @@ const handleTagFilter = (tagId: number) => {
     <div class="btn btn-primary" tabindex="0" role="button">
       <TagIcon class="size-6"/>Labels<ChevronDownIcon class="size-6"/>
     </div>
-    <div tabindex="0" class="absolute z-[10] overflow-visible menu w-52 p-2 shadow bg-base-100 rounded-md dropdown-content">
+    <div tabindex="0" class="absolute z-[10] overflow-visible menu w-52 p-2 mt-3 shadow bg-base-100 rounded-md dropdown-content">
 
       <div class="max-h-56 overflow-y-scroll overflow-x-hidden">
         <div v-if="tags.length === 0" class="text-info text-center">No tags found</div>

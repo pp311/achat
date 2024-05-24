@@ -4,10 +4,20 @@ import { PencilIcon } from '@heroicons/vue/24/solid'
 import { useMessageStore } from '@/stores/messageStore'
 import { storeToRefs } from 'pinia'
 import moment from 'moment'
+import { useRoute } from 'vue-router'
+import { watch } from 'vue'
 
 const store = useMessageStore()
 
 const {contactInfo} = storeToRefs(store)
+
+// const route = useRoute()
+//
+// const contactId = parseInt(route.params.id as string)
+//
+// watch(() => contactId, async() => {
+//   await store.getContact(contactId)
+// })
 </script>
 
 <template>
@@ -32,6 +42,20 @@ const {contactInfo} = storeToRefs(store)
     <label class="w-[40%]" for="first-contact-on">First contact date:</label>
     <span class="text-left">
           {{new Date(moment.utc(contactInfo.createdOn).toLocaleString()).toLocaleString('vi-VN').split(' ')[1] }}
+    </span>
+  </div>
+
+  <div v-if="contactInfo?.sourceName" class="flex flex-row items-center font-bold text-lg mb-1">
+    <label class="w-[40%]" for="first-contact-on">Source name:</label>
+    <span class="text-left">
+      {{contactInfo.sourceName}}
+    </span>
+  </div>
+
+  <div v-if="contactInfo?.sourceEmail" class="flex flex-row items-center font-bold text-lg mb-1">
+    <label class="w-[40%]" for="first-contact-on">Source email:</label>
+    <span class="text-left">
+      {{contactInfo.sourceEmail}}
     </span>
   </div>
 

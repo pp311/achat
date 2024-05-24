@@ -32,6 +32,11 @@ watchEffect(async () => {
 <template>
   <div class="overflow-x-auto">
     <table class="table table-zebra">
+      <col class="w-[5%]"/>
+      <col class="w-[30%]"/>
+      <col class="w-[30%]"/>
+      <col class="w-[20%]"/>
+      <col class="w-[15%]"/>
       <thead>
       <tr>
         <th>
@@ -40,7 +45,7 @@ watchEffect(async () => {
           </label>
         </th>
         <th class="font-bold text-lg">Name/Email</th>
-        <th class="font-bold text-lg">Source type</th>
+        <th class="font-bold text-lg">Source</th>
         <th class="font-bold text-lg">Added Date</th>
         <th></th>
       </tr>
@@ -55,23 +60,25 @@ watchEffect(async () => {
         <td>
           <div class="flex items-center gap-3">
             <div class="avatar">
-              <div class="mask mask-squircle w-12 h-12">
+              <div class="mask mask-squircle size-12">
                 <img v-if="contact.avatarUrl" :src="contact.avatarUrl" alt="" />
-                <UserCircleIcon v-else class="size-10" />
+                <UserCircleIcon v-else class="size-12" />
               </div>
             </div>
-            <div>
+            <div class="flex items-start flex-col justify-center">
               <div class="font-bold text-lg">{{contact.name}}</div>
+              <div v-if="contact.email && contact.email !== contact.name" class="text-sm">{{contact.email}}</div>
             </div>
           </div>
         </td>
         <td>
-          <div class="size-8">
-            <img v-if="contact.sourceType == SourceType.FACEBOOK" src="../../assets/facebook.svg">
-            <img v-if="contact.sourceType == SourceType.GOOGLE" src="../../assets/gmail.svg">
+          <div class="flex w-full items-center gap-4 font-bold">
+            <img v-if="contact.sourceType == SourceType.FACEBOOK" class="size-8" src="../../assets/facebook.svg">
+            <img v-if="contact.sourceType == SourceType.GOOGLE" class="size-8" src="../../assets/gmail.svg">
+            {{contact.sourceType == SourceType.FACEBOOK ? contact.sourceName : contact.sourceEmail}}
           </div>
         </td>
-        <td>
+        <td class="text-gray-500">
           {{new Date(moment.utc(contact.createdOn).toLocaleString()).toLocaleString('vi-VN').split(' ')[1] }}
         </td>
         <th>

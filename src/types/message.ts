@@ -1,3 +1,5 @@
+import type { PagingModel } from '@/types/base'
+
 export interface Message {
   id: number;
   content: string;
@@ -9,7 +11,6 @@ export interface Message {
   attachments: Attachment[];
   createdOn: string;
   updatedOn: string;
-  isLoading: boolean;
 }
 
 export interface Attachment {
@@ -21,4 +22,16 @@ export interface Attachment {
 export interface UploadFacebookAttachmentResponse {
   url: string;
   type: string;
+}
+
+export interface GmailThreadList extends PagingModel {
+  items: GmailThreadInfo[]
+}
+
+export interface GmailThreadInfo {
+  id: string;
+  snippet: string;
+  subject: string;
+  createdOn: Date;
+  isRead: boolean;
 }

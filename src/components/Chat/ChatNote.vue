@@ -12,7 +12,8 @@ const route = useRoute()
 const contactId = parseInt(route.params.id as string)
 const globalStore = useGlobalStore()
 
-watchEffect(async () => {
+watch(() => route.params.id,async () => {
+  const contactId = parseInt(route.params.id as string)
   notes.value = await getNotes(contactId)
 })
 

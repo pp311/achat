@@ -70,6 +70,7 @@ import { useRoute } from 'vue-router'
 import { useGlobalStore } from '@/stores/global'
 import { storeToRefs } from 'pinia'
 import { userService } from '@/services/user.service'
+import {getSources} from '@/services/source.service'
 
 const store = useGlobalStore()
 
@@ -88,9 +89,13 @@ watchEffect(() => {
   }
 })
 
+watchEffect(async() => {
+  store.sources = await getSources()
+})
+
 watchEffect(() => {
   switch (route.path) {
-    case '/chat':
+    case '/chat/:id':
       activePage.value = 'chat'
       break
     case '/contacts':

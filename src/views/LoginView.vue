@@ -29,7 +29,7 @@ const handleLogin = async () => {
     userService.login(loginForm.value.email, loginForm.value.password, loginForm.value.isRemember)
         .then((res: UserType) => {
             store.setUser(res)
-            window.location.href = '/'
+            window.location.href = '/contacts'
             // router.push({ path: '/' })
         })
         .catch((error: Error) => toast.error(error.message))
@@ -56,7 +56,7 @@ const login = () => {
     googleSdkLoaded((google) => {
         google.accounts.oauth2.initCodeClient({
             client_id: '35933257036-qto3kbo0s1f0702skb4ekaoero4c5qi8.apps.googleusercontent.com',
-            scope: 'email profile openid https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.labels',
+            scope: 'email profile openid https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly https://mail.google.com/ https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.labels',
             callback: (response) => {
                 console.log("Handle the response", response)
             }

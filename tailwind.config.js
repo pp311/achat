@@ -29,7 +29,7 @@ export default {
   },
   plugins: [require("daisyui")],
   daisyui: {
-    themes: ["light", "halloween"],
+    themes: ["cupcake", "halloween"],
   },
 }
 
