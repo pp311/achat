@@ -26,6 +26,7 @@ onMounted(() => {
   signalR.on('ReceiveMessage', async(message) => {
     const parsedMessage = JSON.parse(message)
     if (parsedMessage.contactId !== store.contactId) return
+    if (messages.value.find(m => m.mId === parsedMessage.mId)) return
     messages.value.push(parsedMessage)
     if (!parsedMessage.isEcho) {
       isShowDownButton.value = true
@@ -48,10 +49,10 @@ const handleScroll = async () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
     await store.getFacebookMessages(messages.value[0].id, contactId)
 
-    if (!store.isLastMessage) {
+    // if (!store.isLastMessage) {
       await nextTick()
       y.value = chatbox.value?.scrollHeight - oldScrollHeight
-    }
+    // }
     isLoading.value = false
   }
 }
@@ -60,6 +61,14 @@ const handleDownButton = () => {
   ySmooth.value = chatbox.value!.scrollHeight
   isShowDownButton.value = false
 }
+
+watch([y], () => {
+  console.log(y.value, chatbox.value?.scrollHeight)
+  if (chatbox.value != null && chatbox.value?.scrollHeight - y.value < 1000)
+  {
+    isShowDownButton.value = false
+  }
+})
 
 // SET SCROLL TO BOTTOM
 watch([messages, isAllAttachmentsLoaded], async () => {
@@ -95,7 +104,7 @@ const handleLoadImage = (url: string) => {
       <div class="loading"></div>
     </div>
 
-      <div class="btn btn-sm btn-primary -translate-x-1/2 animate-bounce rounded-full absolute bottom-24 left-[47%]"
+      <div class="btn btn-sm btn-primary -translate-x-1/2 z-9999 animate-bounce rounded-full absolute bottom-24 left-[47%]"
            :class="{invisible: !isShowDownButton}"
            @click="handleDownButton">
         <ChevronDoubleDownIcon class="size-4"/>
@@ -109,7 +118,7 @@ const handleLoadImage = (url: string) => {
          :key="message.id">
 
 <!--      Text message-->
-        <div class="chat-bubble chat-bubble-info relative group max-w-[60%]"
+        <div class="chat-bubble chat-bubble-info relative group max-w-[60%] whitespace-pre-line"
              :data-tooltip-target="'tt' + message.id"
              data-tooltip-placement="right"
              v-if="message.attachments.length === 0"

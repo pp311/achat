@@ -87,7 +87,7 @@ function getRandomColor() {
 
 <template>
   <div class="w-[40%] ml-auto flex gap-8 items-center">
-    <button class="btn btn-primary" @click="openModal"><PlusCircleIcon class="size-6"/>Add Tag</button>
+    <button class="btn btn-primary" @click="openModal"><PlusCircleIcon class="size-6"/>Add Label</button>
     <Search
       :handle-search="(searchValue: string) => filter.search = searchValue"
     />
@@ -144,9 +144,9 @@ function getRandomColor() {
   <!--  Add tag modal-->
   <dialog id="add_tag" class="modal">
     <div class="modal-box">
-      <h3 class="font-bold text-lg">Add New Tag</h3>
+      <h3 class="font-bold text-lg">Add New Label</h3>
       <form>
-        <input class="py-4 w-full textarea textarea-bordered mt-4" placeholder="Tag name..." v-model="addTagName">
+        <input class="py-4 w-full textarea textarea-bordered mt-4" placeholder="Label name..." v-model="addTagName">
         <div class="modal-action">
           <form method="dialog" class="flex gap-4">
             <!-- if there is a button in form, it will close the modal -->

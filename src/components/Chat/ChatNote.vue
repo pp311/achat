@@ -94,7 +94,7 @@ const saveNote = async () => {
               <!-- if there is a button in form, it will close the modal -->
               <button class="btn">Close</button>
               <button class="btn btn-primary"
-                      :disabled="updateNoteModel.content === updateNoteModel.oldContent"
+                      :disabled="updateNoteModel.content === updateNoteModel.oldContent || updateNoteModel.content === ''"
                       @click="saveNote">Save</button>
             </form>
         </div>

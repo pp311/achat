@@ -25,7 +25,12 @@ watchEffect(() => {
   isAbleToSend.value = input.value !== "" || (file.value !== null && fileType.value !== null)
 })
 
-const handleSendMessage = async () => {
+const handleSendMessage = async (evt: KeyboardEvent | null = null) => {
+  if (evt?.shiftKey == true)
+    return
+  else
+    evt?.preventDefault()
+
   store.isSending = true
   try{
     if (file.value !== null && fileType.value !== null) {
@@ -41,7 +46,7 @@ const handleSendMessage = async () => {
       await task;
     }
   } finally {
-    store.isSending = false
+    // store.isSending = false
   }
 }
 
@@ -177,6 +182,7 @@ function humanFileSize(size : number) {
         <label for="fileInput" class="btn bg-transparent border-none shadow-none rounded-full"><PaperClipIcon class="size-4"/> </label>
         <textarea rows="1"
                   v-model="input"
+                  @keydown.enter="handleSendMessage"
                   class="grow h-full textarea rounded-r-none"
                   placeholder="Write your messages..." />
         <div class="btn btn-primary rounded-l-none" :class="{'btn-disabled': !isAbleToSend }" @click="handleSendMessage">

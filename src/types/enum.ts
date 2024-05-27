@@ -20,3 +20,8 @@ export enum FileType {
   AUDIO = 'audio',
   FILE = 'file',
 }
+
+export enum TemplateType {
+  EMAIL = 'Email',
+  MESSAGE = 'Message',
+}

@@ -81,19 +81,13 @@ const activePage = ref('')
 
 // if route is /login or /register, hide the navbar
 const route = useRoute()
-watchEffect(() => {
+watchEffect(async () => {
   if (route.path === '/login' || route.path === '/register') {
     isHidden.value = true
   } else {
     isHidden.value = false
   }
-})
 
-watchEffect(async() => {
-  store.sources = await getSources()
-})
-
-watchEffect(() => {
   switch (route.path) {
     case '/chat/:id':
       activePage.value = 'chat'
@@ -107,13 +101,14 @@ watchEffect(() => {
     default:
       activePage.value = ''
   }
-})
 
+  if (!route.path.includes('/login') && !route.path.includes('/register')) {
+    if (sessionStorage.getItem("token") || localStorage.getItem("token"))
+      store.sources = await getSources()
+  }
+})
 
 const handleLogout = () => {
   userService.logout()
 }
-
-
 </script>
-

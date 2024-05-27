@@ -53,8 +53,13 @@ export const useMessageStore = defineStore('message',  {
       response.reverse()
       if (response.length < 30)
         this.isLastMessage = true;
+      else
+        this.isLastMessage = false;
 
       for(const message of response){
+        if (this.messages.find(m => m.mId === message.mId))
+          break
+
         if (message.attachments.length !== 0){
           if (message.attachments[0].type === 'image'){
             this.loadingAttachments.push(message.attachments[0].url);

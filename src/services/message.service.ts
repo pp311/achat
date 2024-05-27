@@ -1,5 +1,5 @@
 import ApiService from '@/services/api.service'
-import type { GmailThreadList, Message, UploadFacebookAttachmentResponse } from '@/types/message'
+import type { Attachment, GmailThreadList, Message, UploadFacebookAttachmentResponse } from '@/types/message'
 import qs from 'qs'
 
 
@@ -41,6 +41,34 @@ export async function uploadFacebookAttachment(file : File) {
   });
 }
 
+export async function uploadGmailAttachment(files : File[]) {
+  const formData = new FormData();
+  for (let i = 0; i < files.length; i++) {
+    formData.append('files', files[i]);
+  }
+
+  const urls = await ApiService.axiosCallWithAuth<string[]>({
+    method: 'POST',
+    url: '/attachments/upload-gmail-attachment',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+
+  const response : Attachment[] = []
+  for(let i = 0; i < urls.length; i++){
+    const attachment : Attachment = {
+      url: urls[i],
+      fileName: files[i].name,
+      type: ""
+    }
+    response.push(attachment);
+  }
+
+  return response
+}
+
 export async function getGmailThreads(contactId : number, pageNumber : number, pageSize : number | null = null) {
   return ApiService.axiosCallWithAuth<GmailThreadList>({
     method: 'GET',
@@ -61,7 +89,7 @@ export async function getThreadMessages(threadId : string, contactId: number) {
   });
 }
 
-export async function sendGmailMessage(message : string, subject : string, contactId : number, replyMessageId : number | null = null) {
+export async function sendGmailMessage(message : string, subject : string, contactId : number, replyMessageId : number | null = null, attachments : Attachment[] | null = null) {
   return ApiService.axiosCallWithAuth<Message>({
     method: 'POST',
     url: `/messages/gmail`,
@@ -69,7 +97,8 @@ export async function sendGmailMessage(message : string, subject : string, conta
       contactId,
       message,
       subject,
-      replyMessageId: replyMessageId || 0
+      replyMessageId: replyMessageId || 0,
+      attachments
     }
   });
 }
