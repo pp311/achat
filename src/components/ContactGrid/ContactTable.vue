@@ -1,31 +1,47 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import { ref, watch, watchEffect } from 'vue'
 import type { ContactFilter, ContactInfo } from '@/types/contact'
 import { useContactListStore } from '@/stores/contactListStore'
 import { ContactSortBy, SourceType } from '@/types/enum'
 import { UserCircleIcon } from '@heroicons/vue/24/solid'
 import moment from 'moment'
-
-const filter = ref<ContactFilter>({
-  search: '',
-  type: null,
-  tagIds: [],
-  sortBy: ContactSortBy.ID,
-  isDescending: false,
-})
+import Pagination from '@/components/Pagination.vue'
+import { storeToRefs } from 'pinia'
+import { toast } from 'vue3-toastify'
+import { deleteGmailThread } from '@/services/message.service'
+import { hideContacts } from '@/services/contact.service'
 
 const isLoading = ref(false)
 
 const contactItems = ref<ContactInfo[]>([])
 
 const store = useContactListStore()
+const {pagingInfo, contactFilter, selectedContacts} = storeToRefs(store)
 
-watchEffect(async () => {
+const isCheckAll = ref(false)
+
+watch([isCheckAll], () => {
+  if (isCheckAll.value) {
+    selectedContacts.value = contactItems.value?.map(c => c.id) || []
+  } else {
+    selectedContacts.value = []
+  }
+})
+
+const handleCheck = (contactId: number) => {
+  if (!selectedContacts.value.includes(contactId)) {
+    selectedContacts.value.push(contactId)
+  } else {
+    selectedContacts.value = selectedContacts.value.filter(id => id !== contactId)
+  }
+}
+
+watch([pagingInfo, contactFilter],async () => {
   isLoading.value = true
   contactItems.value = []
   contactItems.value = await store.getContactList()
   isLoading.value = false
-})
+}, {immediate: true, deep: true})
 
 </script>
 
@@ -41,7 +57,7 @@ watchEffect(async () => {
       <tr>
         <th>
           <label>
-            <input type="checkbox" class="checkbox" />
+            <input type="checkbox" class="checkbox" v-model="isCheckAll" />
           </label>
         </th>
         <th class="font-bold text-lg">Name/Email</th>
@@ -54,7 +70,7 @@ watchEffect(async () => {
       <tr v-for="contact in contactItems" :key="contact.id">
         <th>
           <label>
-            <input type="checkbox" class="checkbox" />
+            <input type="checkbox" class="checkbox" :checked="selectedContacts.includes(contact.id)" @click.stop @change.stop="handleCheck(contact.id)"/>
           </label>
         </th>
         <td>
@@ -99,7 +115,20 @@ watchEffect(async () => {
       </tbody>
     </table>
     </div>
+
+  <div class="flex-grow place-content-end mb-4">
+    <Pagination
+      v-show="!isLoading"
+      :pageNumber="pagingInfo.pageNumber"
+      :totalPages="pagingInfo.totalPages"
+      :totalCount="pagingInfo.totalCount"
+      :hasPreviousPage="pagingInfo.hasPreviousPage"
+      :hasNextPage="pagingInfo.hasNextPage"
+      :handlePageChange="(pageNumber: number) => pagingInfo.pageNumber = pageNumber"
+    />
+  </div>
 </template>
+
 
 <style scoped>
 

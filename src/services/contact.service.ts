@@ -11,9 +11,11 @@ export async function getContacts(filter: ContactFilter, pageNumber: number, pag
       search: filter.search,
       type: filter.type,
       tagIds: filter.tagIds,
+      sourceIds: filter.sourceIds,
       sortBy: filter.sortBy,
       isDescending: filter.isDescending,
       pageNumber,
+      isHidden: filter.isHidden,
       pageSize: pageSize || 10
     },
     paramsSerializer: (params) => {
@@ -26,5 +28,21 @@ export async function getContact(id: number) {
   return ApiService.axiosCallWithAuth<ContactInfo>({
     method: 'GET',
     url: `/contacts/${id}`
+  });
+}
+
+export async function hideContacts(contactIds: number[]) {
+  return ApiService.axiosCallWithAuth<void>({
+    method: 'POST',
+    url: '/contacts/hide',
+    data: {contactIds}
+  });
+}
+
+export async function unHideContacts(contactIds: number[]) {
+  return ApiService.axiosCallWithAuth<void>({
+    method: 'POST',
+    url: '/contacts/un-hide',
+    data: {contactIds}
   });
 }

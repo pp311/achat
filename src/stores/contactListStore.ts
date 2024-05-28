@@ -11,8 +11,10 @@ export const useContactListStore = defineStore('contactList',  {
       search: '',
       type: null,
       tagIds: [],
+      sourceIds: [],
       sortBy: ContactSortBy.ID,
       isDescending: false,
+      isHidden: false
     }),
     pagingInfo : ref<PagingModel>({
       pageNumber: 1,
@@ -21,6 +23,7 @@ export const useContactListStore = defineStore('contactList',  {
       hasPreviousPage: false,
       hasNextPage: false,
     }),
+    selectedContacts: ref<number[]>([])
   }),
 
   actions: {
