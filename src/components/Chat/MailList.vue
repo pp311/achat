@@ -120,7 +120,7 @@ const handleDeleteThreads = async () => {
           <span class="flex gap-2">
             <span class="font-bold">{{thread.subject}}</span>
             <span>-</span>
-          <span >{{convert(thread.snippet)}}</span>
+          <span :class="[thread.isRead === true ? '' : 'font-bold']" >{{convert(thread.snippet)}}</span>
           </span>
         </td>
         <td class="text-right">

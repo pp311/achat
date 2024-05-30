@@ -71,6 +71,7 @@ import { useGlobalStore } from '@/stores/global'
 import { storeToRefs } from 'pinia'
 import { userService } from '@/services/user.service'
 import {getSources} from '@/services/source.service'
+import { getTemplates } from '@/services/template.service'
 
 const store = useGlobalStore()
 
@@ -103,8 +104,10 @@ watchEffect(async () => {
   }
 
   if (!route.path.includes('/login') && !route.path.includes('/register')) {
-    if (sessionStorage.getItem("token") || localStorage.getItem("token"))
+    if (sessionStorage.getItem("token") || localStorage.getItem("token")) {
       store.sources = await getSources()
+      store.templateList = await getTemplates()
+    }
   }
 })
 

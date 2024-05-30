@@ -2,6 +2,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { LoginResponse, UserType } from '@/types/user'
 import type { Source } from '@/types/source'
+import type { Template } from '@/types/template'
 
 export const useGlobalStore = defineStore('global',  {
   state: ()=> ({
@@ -13,6 +14,7 @@ export const useGlobalStore = defineStore('global',  {
       action: () => void
     }>({title: '', message: '', action: () => {}}),
     sources: ref<Source[]>([]),
+    templateList: ref<Template[]>([])
   }),
 
   actions: {

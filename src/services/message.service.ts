@@ -116,3 +116,14 @@ export async function deleteGmailThread(contactId: number, threadIds: string[]){
     }
   });
 }
+
+export async function markRead(contactId: number, messageId: number){
+  return ApiService.axiosCallWithAuth({
+    method: 'POST',
+    url: '/messages/mark-read',
+    params: {
+      contactId,
+      messageId
+    }
+  });
+}

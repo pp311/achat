@@ -8,6 +8,7 @@ export interface Message {
     isEcho: boolean;
     contactId: number;
     userId: number;
+    isRead: boolean;
     attachments: Attachment[];
     createdOn: string;
     updatedOn: string;

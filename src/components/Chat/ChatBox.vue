@@ -1,16 +1,21 @@
 <script setup lang="ts">
-import { PaperAirplaneIcon, PaperClipIcon, PhotoIcon, DocumentIcon, XMarkIcon } from '@heroicons/vue/24/solid'
+import { DocumentIcon, DocumentTextIcon, PaperAirplaneIcon, PaperClipIcon, XMarkIcon } from '@heroicons/vue/24/solid'
 import ChatMessageList from '@/components/Chat/ChatMessageList.vue'
 import { onMounted, onUnmounted, ref, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { useMessageStore } from '@/stores/messageStore'
 import { uploadFacebookAttachment } from '@/services/message.service'
-import { FileType } from '@/types/enum'
+import { FileType, TemplateType } from '@/types/enum'
 import { toast } from 'vue3-toastify'
+import { useGlobalStore } from '@/stores/global'
+import { storeToRefs } from 'pinia'
+import type { Template } from '@/types/template'
 
 const route = useRoute()
 const contactId = parseInt(route.params.id as string)
 const store = useMessageStore()
+const globalStore = useGlobalStore()
+const {templateList} = storeToRefs(globalStore)
 const input = ref<string>("")
 const file = ref<File | null>(null)
 const fileType = ref<FileType | null>(null)
@@ -140,6 +145,35 @@ function humanFileSize(size : number) {
   let i = size == 0 ? 0 : Math.floor( Math.log(size) / Math.log(1024) );
   return +((size / Math.pow(1024, i)).toFixed(2)) + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
 }
+
+const handleTemplateClick = (template: Template) => {
+  input.value = replaceDynamicValue(template.content)
+}
+
+const replaceDynamicValue = (content: string) => {
+  content = content.replace(/{{ContactName}}/g, store.contactInfo?.name || "")
+  content = content.replace(/{{ContactEmail}}/g, store.contactInfo?.email || "")
+  return replaceDateMacros(content)
+}
+
+function replaceDateMacros(str: string) {
+  const today = new Date();
+  const dd = String(today.getDate()).padStart(2, '0');
+  const mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+  const yyyy = today.getFullYear();
+
+  const formattedToday = `${dd}/${mm}/${yyyy}`;
+
+  return str.replace(/{{Today}}/g, formattedToday)
+    .replace(/{{Today\+([0-9]+)}}/g, (match, days) => {
+      const newDate = new Date(today.getTime() + days * 24 * 60 * 60 * 1000);
+      return `${newDate.getDate()}/${newDate.getMonth() + 1}/${newDate.getFullYear()}`;
+    })
+    .replace(/{{Today-([0-9]+)}}/g, (match, days) => {
+      const newDate = new Date(today.getTime() - days * 24 * 60 * 60 * 1000);
+      return `${newDate.getDate()}/${newDate.getMonth() + 1}/${newDate.getFullYear()}`;
+    });
+}
 </script>
 
 <template>
@@ -178,14 +212,31 @@ function humanFileSize(size : number) {
       />
 
       <div class="w-full flex flex-row ">
-        <span class="btn bg-transparent border-none shadow-none rounded-full"><PhotoIcon class="size-4"/> </span>
+        <div class="dropdown dropdown-top dropdown-start">
+        <span tabindex="0" role="button" class="btn bg-transparent border-none shadow-none rounded-full">
+          <DocumentTextIcon class="size-4"/>
+        </span>
+          <div tabindex="0" class="dropdown-content w-fit shadow rounded-xl">
+            <div class="max-h-56 overflow-y-scroll overflow-x-hidden rounded-xl w-full bg-base-100">
+              <div class="font-bold text-lg text-center">Templates</div>
+              <div class="divider my-0"></div>
+              <div v-if="templateList.length === 0" class="text-info text-center">No templates found</div>
+              <div v-for="template in templateList.filter(t => t.type === TemplateType.MESSAGE)"
+                   :key="template.id"
+                   @click="handleTemplateClick(template)"
+                   class="bg-base-100 hover:bg-base-200 w-full cursor-pointer">
+                <div class="px-4 py-2 font-bold text-nowrap">{{template.name}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
         <label for="fileInput" class="btn bg-transparent border-none shadow-none rounded-full"><PaperClipIcon class="size-4"/> </label>
         <textarea rows="1"
                   v-model="input"
                   @keydown.enter="handleSendMessage"
                   class="grow h-full textarea rounded-r-none"
                   placeholder="Write your messages..." />
-        <div class="btn btn-primary rounded-l-none" :class="{'btn-disabled': !isAbleToSend }" @click="handleSendMessage">
+        <div class="btn btn-primary rounded-l-none" :class="{'btn-disabled': !isAbleToSend }" @click="handleSendMessage(null)">
           <PaperAirplaneIcon class="size-6"/>
         </div>
       </div>

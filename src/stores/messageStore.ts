@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import {
   getFacebookMessages,
   getGmailThreads,
-  getThreadMessages,
+  getThreadMessages, markRead,
   sendFacebookMessage
 } from '@/services/message.service'
 import type { GmailThreadList, Message, UploadFacebookAttachmentResponse } from '@/types/message'
@@ -26,6 +26,8 @@ export const useMessageStore = defineStore('message',  {
       search: '',
       type: null,
       tagIds: [],
+      sourceIds: [],
+      isHidden: false,
       sortBy: ContactSortBy.LAST_MESSAGE,
       isDescending: true,
     }),
@@ -68,6 +70,9 @@ export const useMessageStore = defineStore('message',  {
         this.isAllAttachmentsLoaded = false
       }
 
+      if (this.messages.length > 0 && this.messages[this.messages.length-1].isRead === false)
+        await markRead(contactId, this.messages[this.messages.length-1].id)
+
       this.messages = [...response, ...this.messages];
     },
 
@@ -105,6 +110,17 @@ export const useMessageStore = defineStore('message',  {
       this.messages = []
       this.threadId = threadId
       this.messages = await getThreadMessages(threadId, this.contactId)
+
+      const thread = this.threadList?.items.find(t => t.id === threadId)
+      if(thread)
+        thread.isRead = true
+
+      if (this.threadList?.items.every(t => t.isRead === true))
+        this.contactList.find(c => c.id === this.contactId)!.isRead = true
+
+      if (this.messages.length > 0 && this.messages[this.messages.length - 1].isRead === false) {
+        await markRead(this.contactId, this.messages[this.messages.length - 1].id)
+      }
     },
   },
 

@@ -20,12 +20,16 @@ import type { Attachment, GmailThreadList, Message } from '@/types/message'
 import ImageUploader from 'quill-image-uploader'
 import 'quill-image-uploader/dist/quill.imageUploader.min.css'
 import { Quill } from '@vueup/vue-quill'
-import { FileType } from '@/types/enum'
+import { FileType, TemplateType } from '@/types/enum'
+import { useGlobalStore } from '@/stores/global'
 
 if (!Quill.imports['modules/ImageUploader']) {
   console.log("register quill")
   Quill.register('modules/ImageUploader', ImageUploader);
 }
+
+const globalStore = useGlobalStore()
+const {templateList} = storeToRefs(globalStore)
 
 defineProps({
   changeComponent: {
@@ -64,11 +68,31 @@ onMounted(() => {
       mId: parsedMessage.mId,
       updatedOn: parsedMessage.updatedOn,
       userId: parsedMessage.userId,
-      attachments: parsedMessage.attachments
+      attachments: parsedMessage.attachments,
+      isRead: true
     }
 
     store.messages.push(newMessage)
   })
+
+  const selectBoxes = Array.prototype.slice.call(document.querySelectorAll('.ql-picker-options'));
+
+  selectBoxes.forEach(selectBox => {
+    selectBox.style.maxHeight = '150px';
+    selectBox.style.overflow = 'scroll'
+  });
+
+  const placeholderPickerItems = Array.prototype.slice.call(document.querySelectorAll('.ql-templates .ql-picker-item'));
+
+  placeholderPickerItems.forEach(item => {
+    const id = item.dataset.value.split('@#$%')[1]
+    const name = item.dataset.value.split('@#$%')[0]
+    item.textContent = name
+    item.dataset.value = id
+  });
+
+  document.querySelector('.ql-templates .ql-picker-label')!.innerHTML = 'Templates' + document.querySelector('.ql-templates .ql-picker-label')!.innerHTML;
+  document.querySelector('.ql-templates')!.className += ' w-[100px]'
 })
 
 watch([content, fileList], () => {
@@ -140,10 +164,20 @@ const options = {
           ['bold', 'italic', 'underline', 'strike'],
           [{ list: 'ordered' }, { list: 'bullet' }],
           ['image', 'link'],
+          [{ 'templates': templateList.value.filter(t => t.type === TemplateType.EMAIL).map(t => `${t.name}@#$%${t.id}`) }],
         ],
       handlers: {
         link: function (value: any) {
           fileInput.value?.click()
+        },
+        "templates": function (value: any) {
+          console.log(value)
+          const id = value.split('@#$%')[1]
+
+          const template = templateList.value.find(t => t.id == id)
+          if (template) {
+            content.value = replaceDynamicValue(template.content)
+          }
         }
       }
     }
@@ -176,6 +210,31 @@ function humanFileSize(size : number) {
   console.log(size)
   let i = size == 0 ? 0 : Math.floor( Math.log(size) / Math.log(1024) );
   return +((size / Math.pow(1024, i)).toFixed(2)) + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+}
+
+const replaceDynamicValue = (content: string) => {
+  content = content.replace(/{{ContactName}}/g, store.contactInfo?.name || "")
+  content = content.replace(/{{ContactEmail}}/g, store.contactInfo?.email || "")
+  return replaceDateMacros(content)
+}
+
+function replaceDateMacros(str: string) {
+  const today = new Date();
+  const dd = String(today.getDate()).padStart(2, '0');
+  const mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+  const yyyy = today.getFullYear();
+
+  const formattedToday = `${dd}/${mm}/${yyyy}`;
+
+  return str.replace(/{{Today}}/g, formattedToday)
+    .replace(/{{Today\+([0-9]+)}}/g, (match, days) => {
+      const newDate = new Date(today.getTime() + days * 24 * 60 * 60 * 1000);
+      return `${newDate.getDate()}/${newDate.getMonth() + 1}/${newDate.getFullYear()}`;
+    })
+    .replace(/{{Today-([0-9]+)}}/g, (match, days) => {
+      const newDate = new Date(today.getTime() - days * 24 * 60 * 60 * 1000);
+      return `${newDate.getDate()}/${newDate.getMonth() + 1}/${newDate.getFullYear()}`;
+    });
 }
 
 </script>
@@ -314,4 +373,5 @@ function humanFileSize(size : number) {
   width: 1px;
   height: 1px;
 }
+
 </style>

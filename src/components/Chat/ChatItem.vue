@@ -38,7 +38,7 @@ const handleContactClick = () => {
 
         <div class="ml-2 overflow-x-hidden">
             <div class="font-bold mb-2 text-lg">{{props.contact.name || props.contact.email}}</div>
-            <div class="text-sm line-clamp-1">{{convert(props.contact.lastMessage)}}</div>
+            <div class="text-sm line-clamp-1" :class="[props.contact?.isRead === true ? '' : 'font-bold']">{{convert(props.contact.lastMessage)}}</div>
         </div>
     </div>
     <div class="divider my-0"></div>
