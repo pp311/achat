@@ -16,6 +16,7 @@ export interface ContactInfo {
   sourceEmail: string | null;
   lastMessage: string;
   isRead: boolean;
+  refId: number;
   createdOn: Date;
   updatedOn: Date;
 }

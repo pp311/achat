@@ -31,6 +31,25 @@ export async function getContact(id: number) {
   });
 }
 
+export async function addContact(email: string, sourceId: number) {
+  return ApiService.axiosCallWithAuth<void>({
+    method: 'POST',
+    url: `/contacts/`,
+    data: {
+      email,
+      sourceId
+    }
+  });
+}
+
+export async function setContactRefId(contactId: number, refId: number) {
+  return ApiService.axiosCallWithAuth<void>({
+    method: 'POST',
+    url: `/contacts/${contactId}/ref/${refId}`,
+  });
+
+}
+
 export async function hideContacts(contactIds: number[]) {
   return ApiService.axiosCallWithAuth<void>({
     method: 'POST',

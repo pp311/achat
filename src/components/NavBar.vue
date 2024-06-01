@@ -50,8 +50,7 @@
           </div>
           <ChevronDownIcon class="size-6 ml-2"/>
         </div>
-        <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 mt-2">
-          <li><a>Item 1</a></li>
+        <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40 mt-2">
           <li><RouterLink to="/login" @click="handleLogout">Logout</RouterLink></li>
         </ul>
       </div>

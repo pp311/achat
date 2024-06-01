@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TrashIcon, TagIcon, WalletIcon, ChevronDownIcon, MagnifyingGlassIcon, EyeIcon, EyeSlashIcon, ArrowPathIcon } from '@heroicons/vue/24/solid'
+import { TrashIcon, TagIcon, WalletIcon, ChevronDownIcon, MagnifyingGlassIcon, EyeIcon, EyeSlashIcon, ArrowPathIcon, UserPlusIcon } from '@heroicons/vue/24/solid'
 import Search from '@/components/Search.vue'
 import { addTagToContact, createTag, getContactTags, getTags, removeTagFromContact } from '@/services/tag.service'
 import { useContactListStore } from '@/stores/contactListStore'
@@ -7,10 +7,10 @@ import { ref, watch, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 import type { Tag, TagFilter } from '@/types/tag'
 import { useGlobalStore } from '@/stores/global'
-import { SourceType } from '@/types/enum'
+import { SourceType, TemplateType } from '@/types/enum'
 import debounce from 'lodash.debounce'
 import { toast } from 'vue3-toastify'
-import { hideContacts, unHideContacts } from '@/services/contact.service'
+import { addContact, hideContacts, unHideContacts } from '@/services/contact.service'
 
 const store = useContactListStore()
 const globalStore = useGlobalStore()
@@ -81,6 +81,40 @@ const handleHideContacts = async () => {
   }
 }
 
+const addContactModel = ref<{
+  email: string,
+  sourceId: number
+}>({
+  email: '',
+  sourceId: 0
+})
+
+const openModal = () => {
+    addContactModel.value =
+      {
+        email: '',
+        sourceId: 0
+      }
+
+  const modal = document.getElementById('add_contact') as HTMLDialogElement
+  modal.showModal()
+}
+
+const handleAddContact = async () => {
+  const loadingToast = toast.loading('Adding contact')
+  try {
+    const task = addContact(addContactModel.value.email, addContactModel.value.sourceId)
+    const modal = document.getElementById('add_contact') as HTMLDialogElement
+    modal.close()
+    await task
+    await store.getContactList()
+    toast.remove(loadingToast)
+    toast.success('Add contact successfully')
+  } catch(error: any) {
+    toast.remove(loadingToast)
+    toast.error(error.message)
+  }
+}
 
 </script>
 
@@ -151,11 +185,46 @@ const handleHideContacts = async () => {
     </div>
   </div>
 
+  <div class="btn btn-info mr-8" v-if="!store.contactFilter.isHidden" @click="openModal">
+    <UserPlusIcon class="h-6 w-6" />
+    New contact
+  </div>
+
     <div class="btn btn-error" @click="handleHideContacts">
       <TrashIcon v-if="!store.contactFilter.isHidden" class="h-6 w-6" />
       <ArrowPathIcon v-else class="h-6 w-6" />
     </div>
   </div>
+
+  <!--  Add contact modal-->
+  <dialog id="add_contact" class="modal">
+    <div class="modal-box min-w-[600px]">
+      <div class="flex gap-2 items-center">
+        <h3 class="font-bold text-lg">Add new contact</h3>
+        <div class="tooltip tooltip-right" data-tip="We only support add contact to email source">
+          <span role="button" class="font-bold bg-neutral text-neutral-content animate-bounce cursor-pointer size-4 flex items-center justify-center rounded-full">!</span>
+        </div>
+      </div>
+      <form method="dialog">
+        <input class="input input-bordered mt-4 w-full" type="email" placeholder="Contact's email" v-model="addContactModel.email" required>
+        <select class="select select-bordered mt-4 w-full" v-model="addContactModel.sourceId">
+          <option value="0" selected disabled>Select source</option>
+          <option v-for="source in sources.filter(s => s.type === SourceType.GOOGLE)" :key="source.id" :value="source.id">{{source.email || source.name}}</option>
+          </select>
+        <div class="modal-action">
+          <div class="flex gap-4">
+            <!-- if there is a button in form, it will close the modal -->
+            <form method="dialog">
+              <button class="btn">Close</button>
+            </form>
+            <button class="btn btn-primary"
+                    :disabled="addContactModel.email === '' || addContactModel.sourceId === 0"
+                    @click.prevent="handleAddContact">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </dialog>
 </template>
 
 <style scoped>

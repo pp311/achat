@@ -26,10 +26,10 @@ import TemplateSetting from '@/components/Setting/TemplateSetting.vue'
       <LabelSetting/>
     </div>
 
-    <input type="radio" name="my_tabs_2" role="tab" class="tab  [--tab-border-color:oklch(var(--p))] border-primary" aria-label="Fields" />
-    <div role="tabpanel" class="tab-content bg-base-100 border-primary rounded-box p-6">
-      <CustomInfoSetting/>
-    </div>
+<!--    <input type="radio" name="my_tabs_2" role="tab" class="tab  [&#45;&#45;tab-border-color:oklch(var(&#45;&#45;p))] border-primary" aria-label="Fields" />-->
+<!--    <div role="tabpanel" class="tab-content bg-base-100 border-primary rounded-box p-6">-->
+<!--      <CustomInfoSetting/>-->
+<!--    </div>-->
 
   </div>
 </template>

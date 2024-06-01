@@ -7,9 +7,6 @@ import { UserCircleIcon } from '@heroicons/vue/24/solid'
 import moment from 'moment'
 import Pagination from '@/components/Pagination.vue'
 import { storeToRefs } from 'pinia'
-import { toast } from 'vue3-toastify'
-import { deleteGmailThread } from '@/services/message.service'
-import { hideContacts } from '@/services/contact.service'
 
 const isLoading = ref(false)
 

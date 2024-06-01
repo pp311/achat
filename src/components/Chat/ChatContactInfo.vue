@@ -22,14 +22,14 @@ const {contactInfo} = storeToRefs(store)
 
 <template>
   <div v-if="contactInfo?.name" class="flex flex-row items-center font-bold text-lg mb-1 group">
-    <label class="w-[40%]" for="fullname">Name:</label>
+    <label class="w-[30%]" for="fullname">Name:</label>
     <span class="text-left">{{contactInfo.name}}</span>
-    <button class="ml-2 group-hover:block hidden"><PencilIcon class="size-6 text-info"/></button>
+<!--    <button class="ml-2 group-hover:block hidden"><PencilIcon class="size-6 text-info"/></button>-->
     <!--          <input type="text" id="fullname" value="Doan Du" class="input w-full" />-->
   </div>
 
   <div v-if="contactInfo?.email" class="flex flex-row items-center font-bold text-lg mb-1">
-    <label class="w-[40%]" for="email">Email:</label>
+    <label class="w-[30%]" for="email">Email:</label>
     <span class="text-left">{{contactInfo.email}}</span>
   </div>
 
@@ -39,21 +39,21 @@ const {contactInfo} = storeToRefs(store)
 <!--  </div>-->
 
   <div v-if="contactInfo?.createdOn" class="flex flex-row items-center font-bold text-lg mb-1">
-    <label class="w-[40%]" for="first-contact-on">First contact date:</label>
+    <label class="w-[30%]" for="first-contact-on">Added date:</label>
     <span class="text-left">
           {{new Date(moment.utc(contactInfo.createdOn).toLocaleString()).toLocaleString('vi-VN').split(' ')[1] }}
     </span>
   </div>
 
   <div v-if="contactInfo?.sourceName" class="flex flex-row items-center font-bold text-lg mb-1">
-    <label class="w-[40%]" for="first-contact-on">Source name:</label>
+    <label class="w-[30%]" for="first-contact-on">Source name:</label>
     <span class="text-left">
       {{contactInfo.sourceName}}
     </span>
   </div>
 
   <div v-if="contactInfo?.sourceEmail" class="flex flex-row items-center font-bold text-lg mb-1">
-    <label class="w-[40%]" for="first-contact-on">Source email:</label>
+    <label class="w-[30%]" for="first-contact-on">Source email:</label>
     <span class="text-left">
       {{contactInfo.sourceEmail}}
     </span>

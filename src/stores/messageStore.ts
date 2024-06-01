@@ -8,7 +8,7 @@ import {
 } from '@/services/message.service'
 import type { GmailThreadList, Message, UploadFacebookAttachmentResponse } from '@/types/message'
 import type { ContactFilter, ContactInfo, ContactList } from '@/types/contact'
-import { getContact, getContacts } from '@/services/contact.service'
+import { getContact, getContacts, setContactRefId } from '@/services/contact.service'
 import { ContactSortBy } from '@/types/enum'
 import type { PagingModel } from '@/types/base'
 
@@ -18,6 +18,7 @@ export const useMessageStore = defineStore('message',  {
     isLastMessage: ref<boolean>(false),
     contactId: ref<number>(0),
     contactInfo: ref<ContactInfo | null>(null),
+    refContactInfo: ref<ContactInfo | null>(null),
     isSending: ref<boolean>(false),
     loadingAttachments: ref<string[]>([]),
     isAllAttachmentsLoaded: ref<boolean>(true),
@@ -53,10 +54,7 @@ export const useMessageStore = defineStore('message',  {
       }
       const response = await getFacebookMessages(this.contactId, offsetId, 30);
       response.reverse()
-      if (response.length < 30)
-        this.isLastMessage = true;
-      else
-        this.isLastMessage = false;
+      this.isLastMessage = response.length < 30;
 
       for(const message of response){
         if (this.messages.find(m => m.mId === message.mId))
@@ -70,8 +68,10 @@ export const useMessageStore = defineStore('message',  {
         this.isAllAttachmentsLoaded = false
       }
 
-      if (this.messages.length > 0 && this.messages[this.messages.length-1].isRead === false)
+      if (this.messages.length > 0 && this.messages[this.messages.length-1].isRead === false){
+        console.log("here")
         await markRead(contactId, this.messages[this.messages.length-1].id)
+      }
 
       this.messages = [...response, ...this.messages];
     },
@@ -80,6 +80,22 @@ export const useMessageStore = defineStore('message',  {
       if (this.contactInfo == null || this.contactInfo == undefined || this.contactInfo.id !== id) {
         this.contactInfo = null;
         this.contactInfo = await getContact(id)
+
+        if (this.contactInfo.refId != 0){
+          this.refContactInfo = null;
+          this.refContactInfo = await getContact(this.contactInfo.refId);
+        }
+        else {
+          this.refContactInfo = null;
+        }
+      }
+    },
+
+    setRefContact: async function (refId: number) {
+      await setContactRefId(this.contactId, refId)
+      this.refContactInfo = null;
+      if (refId != 0){
+        this.refContactInfo = await getContact(refId);
       }
     },
 

@@ -1,6 +1,5 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { useGlobalStore } from '@/stores/global'
 
 class ApiService {
   private axiosInstance: AxiosInstance;
@@ -54,11 +53,8 @@ class ApiService {
             throw new Error(error.response.data.title);
           });
       }
-      if (this.errorHandler)
-        this.errorHandler(error.response.data.title)
-      else
-        console.error(error.response.data);
-      return error;
+
+      throw new Error(error.response.data.title);
     });
   }
 
@@ -124,11 +120,12 @@ class ApiService {
 
       return data.data;
     } catch (error : any) {
+      console.log(error.message);
+
       if (errorHandler)
-        errorHandler(error.response.data.title)
-      else
-        console.error(error.response.data);
-      throw new Error(error.response.data.title);
+        errorHandler(error.message)
+
+      throw new Error(error.message);
     }
   }
 }
