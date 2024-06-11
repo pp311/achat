@@ -42,7 +42,7 @@ const handleLogin = async () => {
 const handleConnectGoogle = () => {
   googleSdkLoaded((google) => {
     google.accounts.oauth2.initCodeClient({
-      client_id: '35933257036-qto3kbo0s1f0702skb4ekaoero4c5qi8.apps.googleusercontent.com',
+      client_id: import.meta.env.VITE_GOOGLE_CONNECT_CLIENT_ID,
       scope: 'email profile openid https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly https://mail.google.com/ https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.labels',
       callback: async (response) => {
         const loadingToast = toast.loading('Connecting to Google...')

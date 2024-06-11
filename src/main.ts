@@ -12,17 +12,16 @@ import Vue3Toasity, { type ToastContainerOptions } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import VueDragResize from 'vue-drag-resize'
 
 
 const app = createApp(App)
 
 app.use(vue3GoogleLogin, {
-    clientId: '35933257036-qto3kbo0s1f0702skb4ekaoero4c5qi8.apps.googleusercontent.com',
+    clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID,
 
 })
 const connection = new HubConnectionBuilder()
-    .withUrl('http://localhost:8080/signalr', {
+    .withUrl(import.meta.env.VITE_API_BASE_URL + '/signalr', {
         accessTokenFactory: async () => localStorage.getItem('token') || sessionStorage.getItem('token'),
         skipNegotiation: true,
         transport: HttpTransportType.WebSockets,
@@ -41,7 +40,6 @@ router.beforeEach((to, from, next) => {
 })
 
 app.use(VueSignalR, { connection } as VueSignalRConfig)
-app.component('vue-drag-resize', VueDragResize)
 
 app.component('QuillEditor', QuillEditor)
 

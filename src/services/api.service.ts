@@ -17,6 +17,8 @@ class ApiService {
 
       if (error.response.status == 401) {
         const refreshToken = sessionStorage.getItem('refreshToken') || localStorage.getItem('refreshToken');
+        sessionStorage.removeItem('token');
+        localStorage.removeItem('token');
         if (!refreshToken) {
           location.replace('/login?isFromOtherUrl=true')
         }
@@ -46,11 +48,8 @@ class ApiService {
             }
           })
           .catch((error) => {
-            if (this.errorHandler)
-              this.errorHandler(error.response.data.title)
-            else
-              console.error(error.response.data);
-            throw new Error(error.response.data.title);
+            console.log(error)
+            location.replace('/login?isFromOtherUrl=true')
           });
       }
 
