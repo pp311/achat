@@ -51,7 +51,7 @@ const removeRefContact = async () => {
 </script>
 
 <template>
-<div class="w-[25%] bg-base-200 overflow-auto">
+<div class="w-[25%] bg-base-200 overflow-auto border-l border-gray-400">
 
   <Collapse title="Contact Info">
     <template #title><IdentificationIcon class="size-6 bold mr-2"/>Contact Info</template>

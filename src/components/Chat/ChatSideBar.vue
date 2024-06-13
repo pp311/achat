@@ -70,7 +70,7 @@ const handleAddContact = async () => {
 </script>
 
 <template>
-  <div class="w-[17%] px-4 overflow-auto bg-base-200">
+  <div class="w-[17%] px-4 overflow-auto bg-base-200 border-r border-gray-400">
 
     <div class="sticky top-0 z-10 mb-4 pt-6 bg-base-200">
       <div class="flex items-center justify-between mb-4">

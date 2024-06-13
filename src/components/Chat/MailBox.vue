@@ -12,7 +12,7 @@ const changeComponent = (component: any) => {
 </script>
 
 <template>
-  <div class="w-[58%] bg-base-300 flex flex-col items-start px-4">
+  <div class="w-[58%] bg-base-300 flex flex-col items-start">
     <slot/>
 
 <!--    <MailList/>-->

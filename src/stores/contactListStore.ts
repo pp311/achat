@@ -12,8 +12,8 @@ export const useContactListStore = defineStore('contactList',  {
       type: null,
       tagIds: [],
       sourceIds: [],
-      sortBy: ContactSortBy.ID,
-      isDescending: false,
+      sortBy: ContactSortBy.LAST_MESSAGE,
+      isDescending: true,
       isHidden: false
     }),
     pagingInfo : ref<PagingModel>({
@@ -23,7 +23,8 @@ export const useContactListStore = defineStore('contactList',  {
       hasPreviousPage: false,
       hasNextPage: false,
     }),
-    selectedContacts: ref<number[]>([])
+    selectedContacts: ref<number[]>([]),
+    lastedContactId: ref<number>(0)
   }),
 
   actions: {
@@ -34,6 +35,8 @@ export const useContactListStore = defineStore('contactList',  {
       this.pagingInfo.totalCount = response.totalCount
       this.pagingInfo.hasPreviousPage = response.hasPreviousPage
       this.pagingInfo.hasNextPage = response.hasNextPage
+
+      this.lastedContactId = response.items.length > 0 ? response.items[0].id : 0
 
       return response.items
     }

@@ -23,7 +23,7 @@ watch(() => route.params.id,async () => {
 </script>
 
 <template>
-  <div class="w-full flex flex-row h-[calc(100vh-72px)] overflow-hidden overscroll-contain">
+  <div class="w-full flex flex-row h-[calc(100vh-49px)] overflow-hidden overscroll-contain">
     <ChatSideBar/>
 
     <ChatBox v-if="store.contactInfo?.sourceType == SourceType.FACEBOOK">

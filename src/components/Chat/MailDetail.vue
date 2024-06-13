@@ -41,7 +41,7 @@ const editor = ref()
 const store = useMessageStore()
 const content = ref()
 const subject = ref()
-const editorSize = ref(150)
+const editorSize = ref(100)
 const isFullSize = ref(false)
 const fileList = ref<File[]>([])
 const fileInput = ref<HTMLInputElement | null>(null)
@@ -75,6 +75,7 @@ onMounted(() => {
     store.messages.push(newMessage)
   })
 
+  //Template
   const selectBoxes = Array.prototype.slice.call(document.querySelectorAll('.ql-picker-options'));
 
   selectBoxes.forEach(selectBox => {
@@ -93,6 +94,19 @@ onMounted(() => {
 
   document.querySelector('.ql-templates .ql-picker-label')!.innerHTML = 'Templates' + document.querySelector('.ql-templates .ql-picker-label')!.innerHTML;
   document.querySelector('.ql-templates')!.className += ' w-[100px]'
+
+  // Expand
+  const messageDivs = Array.prototype.slice.call(document.querySelectorAll('.message-item'))
+
+  messageDivs.forEach((div, index) => {
+    const contentDiv = div.querySelector('.message-item-content')
+    if (contentDiv.clientHeight > 200 && index != messageDivs.length - 1) {
+      contentDiv.classList.add("message-fading")
+      div.querySelector('.message-item-content')!.addEventListener('click', () => {
+        contentDiv.classList.remove("message-fading")
+      })
+    }
+  })
 })
 
 watch([content, fileList], () => {
@@ -240,7 +254,7 @@ function replaceDateMacros(str: string) {
 </script>
 
 <template>
-  <div class="overflow-auto w-full">
+  <div class="overflow-auto w-full px-4">
     <div class=" w-full top-0 z-9999 rounded-lg">
       <div class="w-fit py-0 flex items-center btn btn-sm btn-primary mt-2"
            @click="store.messages = [] && changeComponent(MailList)">
@@ -252,7 +266,7 @@ function replaceDateMacros(str: string) {
     <!--      <div class="divider mt-0"></div>-->
     <div class="text-2xl mt-4 font-bold">{{ store.messages != undefined && store.messages[0] != undefined && store.messages[0].subject }}</div>
 
-    <div v-for="(message, index) in store.messages" :key="message.id">
+    <div v-for="(message, index) in store.messages" class="message-item" :id="'message' + index" :key="message.id">
 
       <div class="flex w-full items-center mt-4 z-0">
         <div class="flex items-center gap-3">
@@ -273,14 +287,14 @@ function replaceDateMacros(str: string) {
             </div>
           </div>
         </div>
-        <div class="ml-auto mr-2 text-neutral">
+        <div class="ml-auto italic mr-2">
           {{ new Date(moment.utc(message.createdOn).toLocaleString()).toLocaleString('vi-VN') }}
         </div>
       </div>
 
       <!--  Content-->
-      <div class=" mt-4 list-decimal">
-        <div v-html="message.content" class="w-full text-md">
+      <div class=" mt-4 list-decimal relative">
+        <div v-html="message.content" class="w-full text-md message-item-content">
         </div>
         <div class="flex gap-2 flex-wrap">
           <div v-if="message.attachments.length > 0" class="mt-4 w-fit px-2 h-16 flex items-center">
@@ -302,23 +316,23 @@ function replaceDateMacros(str: string) {
           </div>
         </div>
       </div>
-      <div v-if="index !== store.messages.length - 1" class="divider mt-6"></div>
+      <div v-if="index !== store.messages.length - 1" class="divider"></div>
     </div>
   </div>
 
 
-  <div class="divider "></div>
+  <div class="divider my-1"></div>
 
-  <div class=" mt-auto mb-2 w-full">
+  <div class=" mt-auto mb-2 w-full px-4">
 
 
-    <form class="flex items-center mb-4">
+    <form class="flex items-center mb-2">
       <ChevronUpIcon class="size-6 mr-4"
                      :class="{'hidden': isFullSize}"
                      @click="() => {editorSize=550; isFullSize=true}"/>
       <ChevronDownIcon class="size-6 mr-4"
                        :class="{'hidden': !isFullSize}"
-                       @click="() => {editorSize=150; isFullSize=false}"/>
+                       @click="() => {editorSize=100; isFullSize=false}"/>
       <label class="mr-2 text-lg ml-2 font-bold">Subject:</label>
       <input type="text" class="input w-full mr-4" :value="'Re: ' + store.messages[0].subject" required disabled>
       <button @click.prevent="sendMail" :disabled="!isAbleToSend" class="btn btn-primary">Send
@@ -372,6 +386,24 @@ function replaceDateMacros(str: string) {
   position: absolute;
   width: 1px;
   height: 1px;
+}
+
+.message-fading {
+  max-height: 50px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+
+.message-fading:before {
+  content:'';
+  width:100%;
+  height:100%;
+  position:absolute;
+  left:0;
+  top:0;
+  z-index: 100;
+  background:linear-gradient(transparent 10px, rgb(156,163,175));
 }
 
 </style>

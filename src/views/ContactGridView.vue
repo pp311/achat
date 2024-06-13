@@ -4,7 +4,7 @@ import ContactGridActionLine from '@/components/ContactGrid/ContactGridActionLin
 </script>
 
 <template>
-  <div class="w-[90%] mx-auto flex flex-col h-[calc(100vh-72px)] pt-8">
+  <div class="w-[90%] mx-auto flex flex-col h-[calc(100vh-49px)] pt-8">
     <ContactGridActionLine/>
     <ContactTable/>
   </div>

@@ -85,7 +85,7 @@ const handleDeleteThreads = async () => {
 
 <template>
 
-  <div class="flex items-center justify-start w-full px-4" >
+  <div class="flex items-center justify-start w-full px-4 mt-1" >
       <input type="checkbox" class="checkbox" v-model="isCheckAll" />
 
     <div class="divider-vertical mx-4 w-[1px] bg-neutral"></div>

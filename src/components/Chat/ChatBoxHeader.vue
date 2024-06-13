@@ -11,17 +11,17 @@ const {contactInfo} = storeToRefs(store)
 </script>
 
 <template>
-    <div class="flex flex-row items-center gap-2 max-h-20 pt-2 w-full">
+    <div class="flex flex-row items-center gap-2 max-h-16 py-1 w-full bg-base-200 px-4 mb-0 border-b border-gray-400">
         <div class="avatar">
-            <div class="w-16 rounded-full">
+            <div class="w-12 rounded-full">
               <img v-if="contactInfo?.avatarUrl" :src="contactInfo?.avatarUrl" alt="" />
               <UserCircleIcon v-else class="size-full" />
             </div>
         </div>
 
         <div class="flex flex-col">
-            <span class="font-bold text-md">Chatting with</span>
-            <span class="font-bold text-2xl">{{contactInfo?.name || contactInfo?.email}}</span>
+            <span class="font-bold text-xs">Chatting with</span>
+            <span class="font-bold text-xl">{{contactInfo?.name || contactInfo?.email}}</span>
         </div>
 
         <div class="ml-auto">
@@ -30,7 +30,7 @@ const {contactInfo} = storeToRefs(store)
         </div>
     </div>
 
-    <div class="divider m-1"></div>
+<!--    <div class="divider mt-0 mb-1"></div>-->
 
 </template>
 

@@ -1,11 +1,11 @@
 <template>
-  <div class="navbar p-0 bg-base-300 border-b-[1px] border-primary" :class="{hidden: isHidden}">
-    <RouterLink to="/" class="btn btn-ghost text-primary text-2xl">AChat</RouterLink>
+  <div class="navbar min-h-12 p-0 bg-base-300 border-b-[1px] border-primary" :class="{hidden: isHidden}">
+    <RouterLink to="/contacts" class="btn btn-ghost text-primary text-2xl">AChat</RouterLink>
     <!-- navbar left items -->
     <div class="flex lg:block flex-row gap-4 justify-center items-center">
-      <ul class="menu menu-horizontal">
+      <ul class="menu menu-horizontal py-0">
         <li class="">
-          <RouterLink to="/chat" class="font-bold text-lg"
+          <RouterLink :to="'/chat/' + lastedContactId" class="font-bold text-lg"
             :class="{active: activePage === 'chat'}">
             <ChatBubbleLeftRightIcon class="size-6" />
             Chat
@@ -71,8 +71,12 @@ import { storeToRefs } from 'pinia'
 import { userService } from '@/services/user.service'
 import {getSources} from '@/services/source.service'
 import { getTemplates } from '@/services/template.service'
+import { useContactListStore } from '@/stores/contactListStore'
 
 const store = useGlobalStore()
+const contactListStore = useContactListStore()
+
+const {lastedContactId} = storeToRefs(contactListStore)
 
 const { user } = storeToRefs(store)
 
@@ -88,14 +92,15 @@ watchEffect(async () => {
     isHidden.value = false
   }
 
-  switch (route.path) {
-    case '/chat/:id':
+  console.log(route.path.split('/')[1])
+  switch (route.path.split('/')[1]) {
+    case 'chat':
       activePage.value = 'chat'
       break
-    case '/contacts':
+    case 'contacts':
       activePage.value = 'contacts'
       break
-    case '/settings':
+    case 'settings':
       activePage.value = 'settings'
       break
     default:

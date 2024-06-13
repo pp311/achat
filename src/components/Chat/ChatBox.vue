@@ -177,7 +177,7 @@ function replaceDateMacros(str: string) {
 </script>
 
 <template>
-  <div class="w-[58%] overflow-scroll bg-base-300 flex flex-col items-start px-4">
+  <div class="w-[58%] overflow-scroll bg-base-300 flex flex-col items-start">
 <!--HEADER-->
     <slot/>
 <!--    MESSAGES-->

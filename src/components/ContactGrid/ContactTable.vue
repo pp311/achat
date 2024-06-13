@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, watchEffect } from 'vue'
+import { onMounted, ref, watch, watchEffect } from 'vue'
 import type { ContactFilter, ContactInfo } from '@/types/contact'
 import { useContactListStore } from '@/stores/contactListStore'
 import { ContactSortBy, SourceType } from '@/types/enum'
@@ -7,6 +7,7 @@ import { UserCircleIcon } from '@heroicons/vue/24/solid'
 import moment from 'moment'
 import Pagination from '@/components/Pagination.vue'
 import { storeToRefs } from 'pinia'
+import { useSignalR } from '@dreamonkey/vue-signalr'
 
 const isLoading = ref(false)
 
@@ -14,6 +15,13 @@ const contactItems = ref<ContactInfo[]>([])
 
 const store = useContactListStore()
 const {pagingInfo, contactFilter, selectedContacts} = storeToRefs(store)
+
+const signalR = useSignalR()
+onMounted(() => {
+  signalR.on('ReceiveMessage', async(message) => {
+    contactItems.value = await store.getContactList()
+  })
+})
 
 const isCheckAll = ref(false)
 

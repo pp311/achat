@@ -49,7 +49,7 @@ const sendMail = async () => {
 </script>
 
 <template>
-  <div class="overflow-auto w-full relative">
+  <div class="overflow-auto w-full relative px-4">
     <div class=" w-full rounded-lg mb-8">
       <div class="w-fit py-0 flex items-center btn btn-sm btn-primary mt-2"
            @click="props.changeComponent(MailList)"

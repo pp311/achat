@@ -130,9 +130,9 @@ const handleAddContact = async () => {
     </label>
   </div>
 
-  <div class="btn btn-primary">
-    <EyeSlashIcon v-if="!store.contactFilter.isHidden" class="size-6" @click="() => {store.contactFilter.isHidden = true ; selectedContacts = []}"/>
-    <EyeIcon v-else class="size-6" @click="() => {store.contactFilter.isHidden = false ; selectedContacts = []}"/>
+  <div class="btn btn-primary" @click="() => {store.contactFilter.isHidden = !store.contactFilter.isHidden ; selectedContacts = []}">
+    <EyeSlashIcon v-if="!store.contactFilter.isHidden" class="size-6" />
+    <EyeIcon v-else class="size-6"/>
   </div>
 
   <div class="dropdown dropdown-bottom dropdown-end">
