@@ -68,12 +68,19 @@ export const useMessageStore = defineStore('message',  {
         this.isAllAttachmentsLoaded = false
       }
 
-      if (this.messages.length > 0 && this.messages[this.messages.length-1].isRead === false){
-        console.log("here")
-        await markRead(contactId, this.messages[this.messages.length-1].id)
-      }
-
       this.messages = [...response, ...this.messages];
+
+      if (this.messages.length > 0 && this.messages.some(m => m.isRead == false)){
+        await markRead(contactId, 0)
+        const contact = this.contactList.find(c => c.id === contactId)
+        if (contact != undefined) {
+          contact.isRead = true;
+        }
+      }
+    },
+
+    markRead: async function(contactId: number, messageId: number) {
+      await markRead(contactId, messageId)
     },
 
     getContact: async function (id: number) {

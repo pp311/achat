@@ -103,7 +103,7 @@ const handleAddContact = async () => {
     </div>
 
       <div v-for="contact in contactList" :key="contact.id">
-        <ChatItem :contact="contact"/>
+        <ChatItem :contact="contact" :mark-read="() => contact.isRead = true"/>
       </div>
   </div>
 

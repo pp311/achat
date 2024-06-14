@@ -28,6 +28,7 @@ onMounted(() => {
     if (parsedMessage.contactId !== store.contactId) return
     if (messages.value.find(m => m.mId === parsedMessage.mId)) return
     messages.value.push(parsedMessage)
+    await store.markRead(parsedMessage.contactId, parsedMessage.id)
     if (!parsedMessage.isEcho) {
       isShowDownButton.value = true
     }

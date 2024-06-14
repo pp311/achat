@@ -2,21 +2,35 @@
 
 import type { ContactInfo } from '@/types/contact'
 import { SourceType } from '@/types/enum'
-import type { PropType } from 'vue'
+import { type PropType, watch } from 'vue'
 import { UserCircleIcon } from '@heroicons/vue/24/solid'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import {convert} from 'html-to-text'
 
 const props = defineProps({
   contact: {
     type: Object as PropType<ContactInfo>,
     required: true
+  },
+  markRead: {
+    type: Function as PropType<() => void>,
+    required: true
   }
 });
 
 const router = useRouter()
+const route = useRoute()
+let contactId = parseInt(route.params.id as string)
+watch(() => route.params.id, () => {
+  contactId = parseInt(route.params.id as string)
+})
 
 const handleContactClick = () => {
+  console.log(props.contact?.id)
+  console.log(contactId)
+  if (props.contact?.sourceType === SourceType.FACEBOOK) {
+    props.markRead()
+  }
   router.replace(`/chat/${props.contact.id}`)
 }
 
@@ -38,7 +52,8 @@ const handleContactClick = () => {
 
         <div class="ml-2 overflow-x-hidden">
             <div class="font-bold mb-2 text-lg">{{props.contact.name || props.contact.email}}</div>
-            <div class="text-sm line-clamp-1" :class="[props.contact?.isRead === true ? '' : 'font-bold']">{{convert(props.contact.lastMessage)}}</div>
+            <div class="text-sm line-clamp-1" :class="[props.contact?.isRead === true
+            || (props.contact?.id === contactId && props.contact?.sourceType === SourceType.FACEBOOK) ? '' : 'font-bold']">{{convert(props.contact.lastMessage)}}</div>
         </div>
     </div>
     <div class="divider my-0"></div>
