@@ -17,12 +17,12 @@ const changeComponent = (component: any) => {
 
 <!--    <MailList/>-->
 <!--      <MailDetail/>-->
-    <KeepAlive>
+<!--    <KeepAlive>-->
       <component
         :is="currentComponent"
         :changeComponent="changeComponent"
       />
-    </KeepAlive>
+<!--    </KeepAlive>-->
   </div>
 </template>
 
