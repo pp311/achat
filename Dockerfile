@@ -1,4 +1,4 @@
-FROM node:lts-alpine
+FROM node:lts-alpine as build-stage
 # Define build arguments for environment variables
 ARG VITE_API_BASE_URL
 ARG VITE_API_KEY
@@ -24,5 +24,10 @@ RUN npm install
 COPY . .
 # build app for production with minification
 RUN npm run build-only
+
+FROM nginx:stable-alpine as production-stage
+COPY nginx.conf /etc/nginx/conf.d
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+EXPOSE 80
 EXPOSE 8080
-CMD [ "http-server", "-P http://localhost:8080?" , "dist" ]
+CMD ["nginx", "-g", "daemon off;"]
