@@ -79,8 +79,8 @@ export const useMessageStore = defineStore('message',  {
       }
     },
 
-    markRead: async function(contactId: number, messageId: number) {
-      await markRead(contactId, messageId)
+    markRead: async function(contactId: number, messageId: number, threadId: string | null = null) {
+      await markRead(contactId, messageId, threadId)
     },
 
     getContact: async function (id: number) {

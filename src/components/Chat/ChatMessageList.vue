@@ -4,7 +4,7 @@ import { useScroll } from '@vueuse/core'
 import { useSignalR } from '@dreamonkey/vue-signalr'
 import { useMessageStore } from '@/stores/messageStore'
 import { storeToRefs } from 'pinia'
-import { ChevronDoubleDownIcon } from '@heroicons/vue/24/solid'
+import { ChevronDoubleDownIcon, DocumentIcon } from '@heroicons/vue/24/solid'
 import moment from 'moment'
 import { useRoute } from 'vue-router'
 
@@ -27,14 +27,15 @@ onMounted(() => {
     const parsedMessage = JSON.parse(message)
     if (parsedMessage.contactId !== store.contactId) return
     if (messages.value.find(m => m.mId === parsedMessage.mId)) return
-    messages.value.push(parsedMessage)
-    await store.markRead(parsedMessage.contactId, parsedMessage.id)
     if (!parsedMessage.isEcho) {
       isShowDownButton.value = true
     }
     else{
       isSending.value = false
     }
+
+    messages.value.push(parsedMessage)
+    await store.markRead(parsedMessage.contactId, parsedMessage.id)
   })
 })
 
@@ -95,6 +96,10 @@ const handleLoadImage = (url: string) => {
     store.isAllAttachmentsLoaded = true
   }
 }
+function getFilenameFromUrl(url : string) {
+  let name = url.split('/').pop();
+  return name?.split('?')[0];
+}
 </script>
 
 <template>
@@ -134,9 +139,11 @@ const handleLoadImage = (url: string) => {
       </div>
 
 <!--      Image -->
-      <div class="chat-bubble chat-bubble-info relative group max-w-[50%]"
+      <a class="chat-bubble chat-bubble-info relative group max-w-[30%] cursor-pointer"
            :data-tooltip-target="'tt' + message.id"
            data-tooltip-placement="right"
+            :href="message.attachments[0].url"
+             target="_blank"
            v-else-if="message.attachments[0].type === 'image'"
       >
         <img :src="message.attachments[0].url">
@@ -146,7 +153,7 @@ const handleLoadImage = (url: string) => {
           {{new Date(moment.utc(message.updatedOn).toLocaleString()).toLocaleString('vi-VN')}}
           <div class="tooltip-arrow" data-popper-arrow></div>
         </div>
-      </div>
+      </a>
 
 <!--      file-->
       <div class="chat-bubble chat-bubble-info relative group max-w-[50%]"
@@ -156,7 +163,7 @@ const handleLoadImage = (url: string) => {
       >
         <a :href="message.attachments[0].url" @load="handleLoadImage(message.attachments[0].url)" target="_blank" class="flex items-center gap-2">
           <DocumentIcon class="size-8"/>
-          <span>{{message.attachments[0].fileName}}</span>
+          <span>{{getFilenameFromUrl(message.attachments[0].url)}}</span>
         </a>
         <div :id="'tt' + message.id" role="tooltip"
              :class="[message.isEcho ? 'right-[115%]' : 'left-[115%]']"

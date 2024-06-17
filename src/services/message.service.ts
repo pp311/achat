@@ -117,13 +117,14 @@ export async function deleteGmailThread(contactId: number, threadIds: string[]){
   });
 }
 
-export async function markRead(contactId: number, messageId: number){
+export async function markRead(contactId: number, messageId: number, threadId: string | null = null) {
   return ApiService.axiosCallWithAuth({
     method: 'POST',
     url: '/messages/mark-read',
     params: {
       contactId,
-      messageId
+      messageId,
+      threadId
     }
   });
 }

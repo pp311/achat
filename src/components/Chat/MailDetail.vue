@@ -73,6 +73,7 @@ onMounted(() => {
         }
 
         store.messages.push(newMessage)
+        await store.markRead(parsedMessage.contactId, parsedMessage.id, parsedMessage.threadId)
     })
 
     //Template
