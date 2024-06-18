@@ -97,7 +97,7 @@ const handleDeleteThreads = async () => {
            :class="[threadList?.hasPreviousPage === true ? '' : 'btn-disabled cursor-not-allowed']"><ChevronLeftIcon class="size-4"/></div>
       <div class="rounded-full p-0 size-6 hover:bg-base-200 flex justify-center items-center"
            :class="[threadList?.hasNextPage === true ? '' : 'btn-disabled cursor-not-allowed']"><ChevronRightIcon class="size-4"/></div>
-      <div>Show <span class="font-bold">{{((threadList?.pageNumber || 1) - 1) * store.threadPageSize + 1}} - {{((threadList?.pageNumber || 1) - 1) * store.threadPageSize + (threadList?.items.length || 0)}}</span> of <span class="font-bold">{{threadList?.totalCount}}</span></div>
+      <div>Show <span class="font-bold">{{ threadList?.totalCount != undefined && threadList?.totalCount > 0 ? ((threadList?.pageNumber || 1) - 1) * store.threadPageSize + 1 : 0}} - {{((threadList?.pageNumber || 1) - 1) * store.threadPageSize + (threadList?.items.length || 0)}}</span> of <span class="font-bold">{{threadList?.totalCount}}</span></div>
     </div>
   </div>
 

@@ -130,7 +130,7 @@ const removeTagFromContactHandler = async (tagId: number) => {
              v-model="searchTerm"
              class="input input-bordered w-full max-w-xs" />
       <div class="divider my-2"></div>
-      <div class="max-h-56 overflow-y-scroll overflow-x-hidden">
+      <div class="max-h-56 overflow-y-auto overflow-x-hidden">
         <div v-if="tags.length === 0 && !isLoading" class="text-info text-center">No tags found</div>
         <div class="tooltip tooltip-open tooltip-right before:max-w-56 before:break-words before:content-[attr(data-tip)] before:hidden hover:before:block after:hidden hover:after:block w-full cursor-pointer"
              :data-tip="tag.name"

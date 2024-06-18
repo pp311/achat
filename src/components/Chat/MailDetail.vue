@@ -81,7 +81,7 @@ onMounted(() => {
 
     selectBoxes.forEach(selectBox => {
         selectBox.style.maxHeight = '150px';
-        selectBox.style.overflow = 'scroll'
+        selectBox.style.overflow = 'auto'
     });
 
     const placeholderPickerItems = Array.prototype.slice.call(document.querySelectorAll('.ql-templates .ql-picker-item'));
@@ -338,7 +338,7 @@ function replaceDateMacros(str: string) {
             <button @click.prevent="sendMail" :disabled="!isAbleToSend" class="btn btn-primary">Send
             </button>
         </form>
-        <div v-if="fileList.length > 0" class="h-20 flex overflow-x-scroll overflow-y-hidden">
+        <div v-if="fileList.length > 0" class="h-20 flex overflow-x-auto overflow-y-hidden">
 
             <div v-for="file in fileList" :key="file.name"
                 class="flex mr-2 items-center font-bold text-lg border border-dashed border-primary p-4 justify-start h-16 min-w-fit">

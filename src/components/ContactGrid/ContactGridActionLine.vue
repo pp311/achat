@@ -141,7 +141,7 @@ const handleAddContact = async () => {
     </div>
     <div tabindex="0" class="absolute z-[10] overflow-visible menu w-fit p-2 mt-3 shadow bg-base-100 rounded-md dropdown-content">
 
-      <div class="max-h-56 overflow-y-scroll overflow-x-hidden w-full">
+      <div class="max-h-56 overflow-y-auto overflow-x-hidden w-full">
         <div v-if="sources.length === 0" class="text-info text-center">No sources found</div>
 <!--        <div class="tooltip tooltip-open tooltip-right before:break-words before:content-[attr(data-tip)] before:hidden hover:before:block after:hidden hover:after:block w-full cursor-pointer"-->
 <!--             :data-tip="source.email || source.name"-->
@@ -169,7 +169,7 @@ const handleAddContact = async () => {
     </div>
     <div tabindex="0" class="absolute z-[10] overflow-visible menu w-52 p-2 mt-3 shadow bg-base-100 rounded-md dropdown-content">
 
-      <div class="max-h-56 overflow-y-scroll overflow-x-hidden">
+      <div class="max-h-56 overflow-y-auto overflow-x-hidden">
         <div v-if="tags.length === 0" class="text-info text-center">No tags found</div>
         <div class="tooltip tooltip-open tooltip-right before:max-w-56 before:break-words before:content-[attr(data-tip)] before:hidden hover:before:block after:hidden hover:after:block w-full cursor-pointer"
              :data-tip="tag.name"

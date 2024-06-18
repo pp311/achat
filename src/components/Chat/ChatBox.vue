@@ -177,7 +177,7 @@ function replaceDateMacros(str: string) {
 </script>
 
 <template>
-  <div class="w-[58%] overflow-scroll bg-base-300 flex flex-col items-start">
+  <div class="w-[58%] overflow-auto bg-base-300 flex flex-col items-start">
 <!--HEADER-->
     <slot/>
 <!--    MESSAGES-->
@@ -217,7 +217,7 @@ function replaceDateMacros(str: string) {
           <DocumentTextIcon class="size-4"/>
         </span>
           <div tabindex="0" class="dropdown-content w-fit shadow rounded-xl">
-            <div class="max-h-56 overflow-y-scroll overflow-x-hidden rounded-xl w-full bg-base-100">
+            <div class="max-h-56 overflow-y-auto overflow-x-hidden rounded-xl w-full bg-base-100">
               <div class="font-bold text-lg text-center">Templates</div>
               <div class="divider my-0"></div>
               <div v-if="templateList.length === 0" class="text-info text-center">No templates found</div>
