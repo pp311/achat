@@ -103,6 +103,16 @@ const onChange = (e: Event) => {
 
       fileList.value.push(uploadFiles[i])
     }
+
+    let totalFileSize = fileList.value.reduce((a, b) => a + b.size, 0)
+    if (totalFileSize > 15*1024*1024) {
+      toast.error("Total attachment size exceeds 15MB limit")
+      for (let i = 0; i < uploadFiles.length; i++) {
+        if (fileList.value.some(f => f.name === uploadFiles[i].name)) {
+          fileList.value.filter(f => f.name !== uploadFiles[i].name)
+        }
+      }
+    }
   }
 }
 

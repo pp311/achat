@@ -24,6 +24,7 @@ const props = defineProps({
 
 const isCheckAll = ref(false)
 const selectedThreads = ref<string[]>([])
+const isLoading = ref(false)
 
 const signalR = useSignalR()
 
@@ -42,8 +43,16 @@ const route = useRoute()
 const contactId = parseInt(route.params.id as string)
 
 watchEffect(async () => {
+  isLoading.value = true
   await store.getGmailThreads(contactId);
+  isLoading.value = false
 })
+
+const updatePage = async (pageNumber: number) => {
+  isLoading.value = true
+  await store.getGmailThreads(contactId, pageNumber)
+  isLoading.value = false
+}
 
 const selectThread = async (threadId: string) => {
   store.messages = []
@@ -76,7 +85,9 @@ const handleDeleteThreads = async () => {
   const loadingToast = toast.loading('Deleting threads')
   await deleteGmailThread(contactId, selectedThreads.value)
   selectedThreads.value = []
+  isLoading.value = true
   await store.getGmailThreads(contactId)
+  isLoading.value = false
   toast.remove(loadingToast)
   toast.success('Threads deleted successfully')
 }
@@ -94,9 +105,11 @@ const handleDeleteThreads = async () => {
     <div class="btn btn-sm btn-error p-2" @click="handleDeleteThreads"><TrashIcon class="size-4"/>Delete</div>
     <div class="ml-auto flex items-center gap-4">
       <div class="rounded-full p-0 size-6 hover:bg-base-200 flex justify-center items-center"
-           :class="[threadList?.hasPreviousPage === true ? '' : 'btn-disabled cursor-not-allowed']"><ChevronLeftIcon class="size-4"/></div>
+           @click="updatePage((threadList?.pageNumber || 1) - 1)"
+           :class="[threadList?.hasPreviousPage === true ? 'cursor-pointer' : 'btn-disabled']"><ChevronLeftIcon class="size-4"/></div>
       <div class="rounded-full p-0 size-6 hover:bg-base-200 flex justify-center items-center"
-           :class="[threadList?.hasNextPage === true ? '' : 'btn-disabled cursor-not-allowed']"><ChevronRightIcon class="size-4"/></div>
+           @click="updatePage((threadList?.pageNumber || 1) + 1)"
+           :class="[threadList?.hasNextPage === true ? 'cursor-pointer' : 'btn-disabled']"><ChevronRightIcon class="size-4"/></div>
       <div>Show <span class="font-bold">{{ threadList?.totalCount != undefined && threadList?.totalCount > 0 ? ((threadList?.pageNumber || 1) - 1) * store.threadPageSize + 1 : 0}} - {{((threadList?.pageNumber || 1) - 1) * store.threadPageSize + (threadList?.items.length || 0)}}</span> of <span class="font-bold">{{threadList?.totalCount}}</span></div>
     </div>
   </div>
@@ -109,7 +122,7 @@ const handleDeleteThreads = async () => {
       <col class="w-[83%]"/>
       <col class="w-[12%]"/>
       <tbody>
-      <tr class="cursor-pointer hover" v-for="thread in threadList?.items"
+      <tr class="cursor-pointer hover" v-for="thread in threadList?.items" v-if="!isLoading"
           @click="selectThread(thread.id)" :key="thread.id">
         <th>
           <label>
@@ -128,14 +141,14 @@ const handleDeleteThreads = async () => {
         </td>
       </tr>
 
-      <!--      Loading-->
-      <!--      <template v-if="isLoading" >-->
-      <!--        <tr v-for="i in 3" :key="i">-->
-      <!--          <td v-for="j in 5" :key="j">-->
-      <!--            <div class="skeleton h-10 w-full"></div>-->
-      <!--          </td>-->
-      <!--        </tr>-->
-      <!--      </template>-->
+<!--            Loading-->
+            <template v-if="isLoading" >
+              <tr v-for="i in 3" :key="i">
+                <td v-for="j in 3" :key="j">
+                  <div class="skeleton h-10 w-full"></div>
+                </td>
+              </tr>
+            </template>
       </tbody>
     </table>
   </div>

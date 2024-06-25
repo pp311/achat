@@ -90,7 +90,7 @@ watchEffect(
   <h2 class="text-2xl font-bold mb-4">Connect new source</h2>
   <div class="flex flex-row gap-6 mb-6">
     <div class="card w-96 bg-base-100 h-[300px] shadow-xl border border-primary overflow-hidden">
-      <img src="../../assets/facebook-banner.png" alt="Shoes" class="size-full" />
+      <img src="../../assets/facebook-banner.png" alt="Shoes" class="h-[150px]" />
       <div class="card-body">
         <h2 class="card-title">Facebook page</h2>
         <div class="card-actions justify-end">
@@ -112,7 +112,7 @@ watchEffect(
     </div>
 
     <div class="card w-96 bg-base-100 h-[300px] shadow-xl border border-primary overflow-hidden">
-      <img src="../../assets/gmail-banner.jpg" alt="Shoes" class="size-full" />
+      <img src="../../assets/gmail-banner.jpg" alt="Shoes" class="h-[150px]" />
       <div class="card-body">
         <h2 class="card-title">Gmail</h2>
         <div class="card-actions justify-end">
@@ -140,7 +140,7 @@ watchEffect(
         <img v-if="source.type == SourceType.GOOGLE" src="../../assets/gmail-banner.jpg" alt="Shoes"
              class="size-full" />
         <img v-if="source.type == SourceType.FACEBOOK" src="../../assets/facebook-banner.png" alt="Shoes"
-             class="size-full" />
+             class="h-[150px]" />
         <div class="card-body">
           <h2 v-if="source.type == SourceType.FACEBOOK" class="card-title">{{ source.name }}</h2>
           <h2 v-if="source.type == SourceType.GOOGLE" class="card-title">{{ source.email }}</h2>

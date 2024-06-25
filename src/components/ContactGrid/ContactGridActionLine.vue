@@ -119,7 +119,7 @@ const handleAddContact = async () => {
 </script>
 
 <template>
-<div class="flex items-center justify-end gap-4 mb-4">
+<div class="flex items-center justify-end gap-4 mb-0">
   <div class="font-bold text-2xl justify-self-start grow">{{store.contactFilter.isHidden ? 'Hidden contacts' : 'Contacts'}}</div>
   <div class="w-100">
     <label class="input input-bordered flex items-center gap-2">

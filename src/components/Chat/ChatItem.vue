@@ -51,7 +51,8 @@ const handleContactClick = () => {
         </div>
 
         <div class="ml-2 overflow-x-hidden">
-            <div class="font-bold mb-2 text-lg">{{props.contact.name || props.contact.email}}</div>
+            <div class="font-bold mb-0 text-lg">{{props.contact.name || props.contact.email}}</div>
+            <div class="mb-2 text-xs italic line-clamp-1" v-if="props.contact.name && props.contact?.sourceType == SourceType.GOOGLE">({{props.contact.email}})</div>
             <div class="text-sm line-clamp-1" :class="[props.contact?.isRead === true
             || (props.contact?.id === contactId && props.contact?.sourceType === SourceType.FACEBOOK) ? '' : 'font-bold']">{{convert(props.contact.lastMessage)}}</div>
         </div>

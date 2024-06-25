@@ -42,7 +42,7 @@ export const useMessageStore = defineStore('message',  {
     contactList: ref<ContactInfo[]>([]),
 
     threadList: ref<GmailThreadList | null>(null),
-    threadPageSize: ref<number>(25),
+    threadPageSize: ref<number>(10),
     threadId: ref<string>(''),
   }),
 
@@ -142,7 +142,7 @@ export const useMessageStore = defineStore('message',  {
         this.contactList.find(c => c.id === this.contactId)!.isRead = true
 
       if (this.messages.length > 0 && this.messages[this.messages.length - 1].isRead === false) {
-        await markRead(this.contactId, this.messages[this.messages.length - 1].id)
+        await markRead(this.contactId, this.messages[this.messages.length - 1].id, threadId)
       }
     },
   },

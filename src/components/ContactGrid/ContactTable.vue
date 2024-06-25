@@ -81,7 +81,7 @@ watch([pagingInfo, contactFilter],async () => {
         <td>
           <div class="flex items-center gap-3">
             <div class="avatar">
-              <div class="mask mask-squircle size-12">
+              <div class="mask mask-circle size-12">
                 <img v-if="contact.avatarUrl" :src="contact.avatarUrl" alt="" />
                 <UserCircleIcon v-else class="size-12" />
               </div>

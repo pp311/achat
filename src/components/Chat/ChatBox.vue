@@ -90,6 +90,13 @@ const onChange = (e: Event) => {
   const files = target.files
   if (files) {
     file.value = files[0]
+
+    let totalFileSize = files[0].size
+    if (totalFileSize > 5*1024*1024) {
+      toast.error("Total attachment size exceeds 5MB limit")
+      return
+    }
+
     switch (file.value.type) {
       case "image/jpeg":
       case "image/png":
