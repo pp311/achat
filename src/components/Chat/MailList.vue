@@ -12,8 +12,11 @@ import { useSignalR } from '@dreamonkey/vue-signalr'
 import {deleteGmailThread} from '@/services/message.service'
 import { toast } from 'vue3-toastify'
 import {convert} from 'html-to-text'
+import { disconnectGoogle, getSources } from '@/services/source.service'
+import { useGlobalStore } from '@/stores/global'
 
 const store = useMessageStore()
+const globalStore = useGlobalStore()
 
 const props = defineProps({
   changeComponent: {
@@ -82,14 +85,23 @@ const handleDeleteThreads = async () => {
     return
   }
 
-  const loadingToast = toast.loading('Deleting threads')
-  await deleteGmailThread(contactId, selectedThreads.value)
-  selectedThreads.value = []
-  isLoading.value = true
-  await store.getGmailThreads(contactId)
-  isLoading.value = false
-  toast.remove(loadingToast)
-  toast.success('Threads deleted successfully')
+  globalStore.confirmationModal = {
+    title: 'Delete thread',
+    message: 'Are you sure you want to delete this thread? This action cannot be undone!.',
+    action: async () => {
+      const loadingToast = toast.loading('Deleting threads')
+      await deleteGmailThread(contactId, selectedThreads.value)
+      selectedThreads.value = []
+      isLoading.value = true
+      await store.getGmailThreads(contactId)
+      isLoading.value = false
+      toast.remove(loadingToast)
+      toast.success('Threads deleted successfully')
+    }
+  }
+
+  const modal = document.getElementById('confirmation_modal') as HTMLDialogElement
+  modal.showModal()
 }
 
 </script>

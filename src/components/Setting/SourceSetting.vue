@@ -14,6 +14,7 @@ import {
   disconnectFacebook,
   disconnectGoogle
 } from '@/services/source.service'
+import { deleteNote } from '@/services/note.service'
 
 const model = ref({
   accessToken: null
@@ -56,21 +57,39 @@ const handleConnectGoogle = () => {
 }
 
 const handleLogout = async (sourceId: number) => {
-  model.value.accessToken = null
-  const loadingToast = toast.loading('Disconnecting...')
-  await disconnectFacebook(sourceId)
-  store.sources = await getSources()
-  toast.remove(loadingToast)
-  toast.success('Disconnect successfully.')
+  store.confirmationModal = {
+    title: 'Disconnect from this source',
+    message: 'Are you sure you want to disconnect from this source? All contacts of this source will be deleted too!.',
+    action: async () => {
+      model.value.accessToken = null
+      const loadingToast = toast.loading('Disconnecting...')
+      await disconnectFacebook(sourceId)
+      store.sources = await getSources()
+      toast.remove(loadingToast)
+      toast.success('Disconnect successfully.')
+    }
+  }
+
+  const modal = document.getElementById('confirmation_modal') as HTMLDialogElement
+  modal.showModal()
 }
 
 const handleDisconnectGoogle = async (sourceId: number) => {
-  model.value.accessToken = null
-  const loadingToast = toast.loading('Disconnecting...')
-  await disconnectGoogle(sourceId)
-  store.sources = await getSources()
-  toast.remove(loadingToast)
-  toast.success('Disconnect successfully.')
+  store.confirmationModal = {
+    title: 'Disconnect from this source',
+    message: 'Are you sure you want to disconnect from this source? All contacts of this source will be deleted too!.',
+    action: async () => {
+      model.value.accessToken = null
+      const loadingToast = toast.loading('Disconnecting...')
+      await disconnectGoogle(sourceId)
+      store.sources = await getSources()
+      toast.remove(loadingToast)
+      toast.success('Disconnect successfully.')
+    }
+  }
+
+  const modal = document.getElementById('confirmation_modal') as HTMLDialogElement
+  modal.showModal()
 }
 
 watchEffect(
@@ -111,7 +130,7 @@ watchEffect(
       </div>
     </div>
 
-    <div class="card w-96 bg-base-100 h-[300px] shadow-xl border border-primary overflow-hidden">
+    <div class="card relative w-96 bg-base-100 h-[300px] shadow-xl border border-primary overflow-hidden">
       <img src="../../assets/gmail-banner.jpg" alt="Shoes" class="h-[150px]" />
       <div class="card-body">
         <h2 class="card-title">Gmail</h2>
@@ -123,6 +142,16 @@ watchEffect(
               </button>
             </div>
           </GoogleLogin>
+        </div>
+      </div>
+
+
+      <div class="dropdown dropdown-hover absolute left-4 top-4">
+        <span role="button" class="font-bold bg-neutral text-neutral-content animate-bounce cursor-pointer size-4 flex items-center justify-center rounded-full">!</span>
+        <div class="card card-compact dropdown-content z-[1] shadow rounded-box w-[350px] bg-neutral text-neutral-content">
+          <div class="card-body w-full">
+            <h2 class=" w-full">Only receive emails from newly created threads starting from the time of connection</h2>
+          </div>
         </div>
       </div>
     </div>
@@ -138,7 +167,7 @@ watchEffect(
         :key="source.id"
         class="card w-96 bg-base-100 h-[300px] shadow-xl border border-primary overflow-hidden">
         <img v-if="source.type == SourceType.GOOGLE" src="../../assets/gmail-banner.jpg" alt="Shoes"
-             class="size-full" />
+             class="h-[150px]" />
         <img v-if="source.type == SourceType.FACEBOOK" src="../../assets/facebook-banner.png" alt="Shoes"
              class="h-[150px]" />
         <div class="card-body">
