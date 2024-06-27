@@ -25,9 +25,12 @@ const isFirstLoad = ref(false)
 const searchTerm = ref('')
 
 watch(() => route.params.id, async () => {
+  isLoading.value = true
   isDropDownLoading.value = true
   const contactId = parseInt(route.params.id as string)
   contactTags.value = (await getContactTags(contactId))
+  tags.value = (await getTags(filter.value, contactTags.value.map(ct => ct.id),100000)).items
+  isLoading.value = false
   isDropDownLoading.value = false
 }, {immediate: true})
 
